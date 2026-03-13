@@ -1,27 +1,35 @@
 import pymysql
 import os
+import ssl
 from dotenv import load_dotenv
 
 load_dotenv()
 
 class Database:
     def __init__(self):
-        self.host = os.getenv('MYSQL_HOST', 'localhost')
-        self.user = os.getenv('MYSQL_USER', 'root')
-        self.password = os.getenv('MYSQL_PASSWORD', '')
-        self.database = os.getenv('MYSQL_DB', 'secureshe_db')
-        self.port = int(os.getenv('MYSQL_PORT', 3306))
+        self.host = os.getenv('DB_HOST', 'localhost')
+        self.user = os.getenv('DB_USER', 'root')
+        self.password = os.getenv('DB_PASSWORD', '')
+        self.database = os.getenv('DB_NAME', 'secureshe_db')
+        self.port = int(os.getenv('DB_PORT', 3306))
+        self.ssl_ca = os.getenv('SSL_CA_PATH', None)
     
     def get_connection(self):
-        """Get database connection"""
+        """Get database connection with SSL support for TiDB Cloud"""
         try:
+            # Create SSL context if connecting to TiDB Cloud
+            ssl_context = None
+            if self.ssl_ca:
+                ssl_context = ssl.create_default_context(cafile=self.ssl_ca)
+            
             conn = pymysql.connect(
                 host=self.host,
                 user=self.user,
                 password=self.password,
                 database=self.database,
                 port=self.port,
-                cursorclass=pymysql.cursors.DictCursor
+                cursorclass=pymysql.cursors.DictCursor,
+                ssl=ssl_context
             )
             return conn
         except Exception as e:
@@ -57,7 +65,9 @@ db = Database()
 
 def init_db():
     """Test database connection"""
-    if db.get_connection():
+    conn = db.get_connection()
+    if conn:
+        conn.close()
         print("✅ Database connected successfully!")
         return True
     else:
