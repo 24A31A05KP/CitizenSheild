@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - SecureShe</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Additional styles for register page */
+        .auth-container {
+            padding: 120px 20px 60px;
+            min-height: 80vh;
+            background: linear-gradient(rgba(106, 27, 154, 0.7), rgba(156, 39, 176, 0.7)), 
+                        url('https://images.unsplash.com/photo-1521791136064-7986c2920216?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-box {
+            max-width: 450px;
+            width: 100%;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            animation: slideUp 0.5s ease;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-header img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            border: 3px solid var(--primary);
+        }
+
+        .auth-header h2 {
+            color: var(--primary);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-header p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.2rem;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.3rem;
+            color: #555;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 12px;
+            top: 35px;
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 0.7rem 1rem 0.7rem 2.2rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(106, 27, 154, 0.1);
+        }
+
+        .input-group small {
+            display: block;
+            color: #666;
+            font-size: 0.8rem;
+            margin-top: 0.2rem;
+        }
+
+        .btn-register {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(106, 27, 154, 0.3);
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .auth-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .auth-footer a:hover {
+            color: var(--secondary);
+        }
+
+        .message {
+            margin-top: 1rem;
+            text-align: center;
+            padding: 0.75rem;
+            border-radius: 10px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .message.error {
+            background: #fee;
+            color: var(--danger);
+            border: 1px solid #fcc;
+        }
+
+        .message.success {
+            background: #efe;
+            color: var(--success);
+            border: 1px solid #cfc;
+        }
+
+        .message.info {
+            background: #e6f3ff;
+            color: #0066cc;
+            border: 1px solid #b8daff;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .logo-img {
+            height: 40px;
+            width: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .password-strength {
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            margin-top: 0.3rem;
+            overflow: hidden;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s, background 0.3s;
+        }
+
+        .strength-weak { background: var(--danger); width: 33%; }
+        .strength-medium { background: var(--warning); width: 66%; }
+        .strength-strong { background: var(--success); width: 100%; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <img src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="SecureShe Logo" class="logo-img">
+                <span>SecureShe</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="sos.html">SOS</a></li>
+                <li><a href="helplines.html">Helplines</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="register.html" class="btn-register active">Register</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="auth-container">
+        <div class="auth-box">
+            <div class="auth-header">
+                <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Join SecureShe">
+                <h2>Join SecureShe</h2>
+                <p>Create your account to stay protected</p>
+            </div>
+            
+            <form id="register-form">
+                <div class="input-group">
+                    <label>Full Name</label>
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="name" placeholder="Enter your full name" required>
+                </div>
+                
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="input-group">
+                    <label>Phone Number</label>
+                    <i class="fas fa-phone"></i>
+                    <input type="tel" id="phone" placeholder="Enter your phone number" required>
+                </div>
+                
+                <div class="input-group">
+                    <label>Password</label>
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" placeholder="Create a password" required onkeyup="checkPasswordStrength()">
+                    <small>Minimum 6 characters with letters and numbers</small>
+                    <div class="password-strength">
+                        <div id="strength-bar" class="password-strength-bar"></div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-register">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+                
+                <div class="auth-footer">
+                    <p>Already have an account? <a href="login.html">Login here</a></p>
+                </div>
+            </form>
+            <div id="message" class="message"></div>
+        </div>
+    </div>
+
+    <script>
+    function checkPasswordStrength() {
+        const password = document.getElementById('password').value;
+        const strengthBar = document.getElementById('strength-bar');
+        
+        strengthBar.className = 'password-strength-bar';
+        
+        if (password.length === 0) {
+            strengthBar.style.width = '0';
+            return;
+        }
+        
+        let strength = 0;
+        if (password.length >= 6) strength++;
+        if (password.match(/[a-z]/)) strength++;
+        if (password.match(/[A-Z]/)) strength++;
+        if (password.match(/[0-9]/)) strength++;
+        if (password.match(/[^a-zA-Z0-9]/)) strength++;
+        
+        if (strength <= 2) {
+            strengthBar.classList.add('strength-weak');
+        } else if (strength <= 4) {
+            strengthBar.classList.add('strength-medium');
+        } else {
+            strengthBar.classList.add('strength-strong');
+        }
+    }
+
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const phone = document.getElementById('phone').value;
+        const password = document.getElementById('password').value;
+        const messageDiv = document.getElementById('message');
+        
+        messageDiv.className = 'message';
+        
+        // Validation
+        if (password.length < 6) {
+            messageDiv.className = 'message error';
+            messageDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Password must be at least 6 characters';
+            return;
+        }
+        
+        messageDiv.className = 'message info';
+        messageDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating your account...';
+        
+        try {
+            const response = await fetch('http://localhost:5000/api/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, email, phone, password })
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                localStorage.setItem('token', data.access_token);
+                localStorage.setItem('user', JSON.stringify(data.user));
+                messageDiv.className = 'message success';
+                messageDiv.innerHTML = '<i class="fas fa-check-circle"></i> Registration successful! Redirecting...';
+                setTimeout(() => {
+                    window.location.href = '../index.html';
+                }, 1500);
+            } else {
+                messageDiv.className = 'message error';
+                if (data.error.includes('phone')) {
+                    messageDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> This phone number is already registered. <a href="login.html">Login instead?</a>';
+                } else if (data.error.includes('email')) {
+                    messageDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> This email is already registered. <a href="login.html">Login instead?</a>';
+                } else {
+                    messageDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${data.error}`;
+                }
+            }
+        } catch (error) {
+            messageDiv.className = 'message error';
+            messageDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Connection error. Make sure server is running.';
+        }
+    });
+    </script>
+</body>
+</html>

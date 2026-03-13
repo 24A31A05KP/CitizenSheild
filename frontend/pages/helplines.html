@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>National Helplines - SecureShe India</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6a1b9a;
+            --secondary: #9c27b0;
+            --danger: #d32f2f;
+            --success: #2e7d32;
+            --warning: #ff9800;
+            --info: #1976d2;
+            --saffron: #FF9933;
+            --green: #138808;
+            --navy: #000080;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Hero Section with Indian Theme */
+        .helplines-hero {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                        url('https://images.unsplash.com/photo-1524492412937-b28074a5d7da?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            padding: 120px 20px 80px;
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .helplines-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--saffron), white, var(--green));
+        }
+
+        .helplines-hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--green), white, var(--saffron));
+        }
+
+        .helplines-hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 2;
+        }
+
+        .helplines-hero h1 i {
+            color: var(--saffron);
+        }
+
+        .helplines-hero p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .india-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--saffron), white, var(--green));
+            color: var(--navy);
+            padding: 0.5rem 2rem;
+            border-radius: 50px;
+            font-weight: bold;
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        /* Main Container */
+        .helplines-container {
+            max-width: 1200px;
+            margin: -50px auto 60px;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Emergency Bar - Indian Numbers */
+        .emergency-bar {
+            background: linear-gradient(135deg, #FF9933, #FFFFFF, #138808);
+            color: var(--navy);
+            padding: 2.5rem;
+            border-radius: 30px;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+            animation: emergencyPulse 2s infinite;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid var(--navy);
+        }
+
+        .emergency-bar::before {
+            content: '🇮🇳';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 2rem;
+            opacity: 0.3;
+            animation: rotate 10s linear infinite;
+        }
+
+        .emergency-bar::after {
+            content: '🇮🇳';
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 2rem;
+            opacity: 0.3;
+            animation: rotate 10s linear infinite reverse;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes emergencyPulse {
+            0% { box-shadow: 0 30px 60px rgba(255,153,51,0.4); }
+            50% { box-shadow: 0 40px 80px rgba(19,136,8,0.4); }
+            100% { box-shadow: 0 30px 60px rgba(0,0,128,0.4); }
+        }
+
+        .emergency-bar h2 {
+            margin-bottom: 1.5rem;
+            font-size: 2.2rem;
+            position: relative;
+            z-index: 2;
+            text-shadow: 2px 2px 4px rgba(255,255,255,0.5);
+        }
+
+        .emergency-bar h2 i {
+            animation: shake 1s infinite;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(10deg); }
+            75% { transform: rotate(-10deg); }
+        }
+
+        .emergency-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 2;
+        }
+
+        .emergency-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--navy);
+            color: white;
+            padding: 1.2rem 2.5rem;
+            border-radius: 60px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.3rem;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 2px solid white;
+            cursor: pointer;
+        }
+
+        .emergency-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            background: var(--saffron);
+            color: var(--navy);
+        }
+
+        .emergency-btn:active {
+            transform: translateY(0) scale(0.95);
+        }
+
+        .emergency-btn i {
+            font-size: 1.8rem;
+            animation: ring 2s infinite;
+        }
+
+        @keyframes ring {
+            0%, 100% { transform: rotate(0deg); }
+            10%, 30%, 50%, 70%, 90% { transform: rotate(15deg); }
+            20%, 40%, 60%, 80% { transform: rotate(-15deg); }
+        }
+
+        /* Helplines Grid */
+        .helplines-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .helpline-card {
+            background: white;
+            border-radius: 30px;
+            padding: 2rem;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,128,0.1);
+            cursor: pointer;
+        }
+
+        .helpline-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0,0,128,0.2);
+        }
+
+        .helpline-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--saffron), white, var(--green));
+        }
+
+        .helpline-card.national::after {
+            content: '🇮🇳 NATIONAL';
+            position: absolute;
+            top: 20px;
+            right: -30px;
+            background: linear-gradient(135deg, var(--saffron), var(--green));
+            color: white;
+            padding: 0.3rem 3rem;
+            font-size: 0.8rem;
+            font-weight: bold;
+            transform: rotate(45deg);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .helpline-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--navy), var(--primary));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 20px rgba(0,0,128,0.3);
+            transition: all 0.3s;
+        }
+
+        .helpline-card:hover .helpline-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .helpline-icon i {
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .helpline-card h3 {
+            color: var(--navy);
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .helpline-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--success);
+            margin: 1rem 0;
+            letter-spacing: 2px;
+            font-family: monospace;
+            background: #f0f9f0;
+            padding: 0.5rem;
+            border-radius: 15px;
+            display: inline-block;
+        }
+
+        .helpline-description {
+            color: #666;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .helpline-timing {
+            background: #e8f5e9;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: var(--success);
+            display: inline-block;
+        }
+
+        .helpline-timing i {
+            margin-right: 0.3rem;
+        }
+
+        .helpline-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .call-btn {
+            flex: 2;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            background: linear-gradient(135deg, var(--success), #1e7e34);
+            color: white;
+            padding: 1rem;
+            border: none;
+            border-radius: 15px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(46,125,50,0.3);
+        }
+
+        .call-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(46,125,50,0.4);
+        }
+
+        .call-btn:active {
+            transform: translateY(0);
+        }
+
+        .call-btn i {
+            animation: phone-ring 1s infinite;
+        }
+
+        @keyframes phone-ring {
+            0%, 100% { transform: rotate(0deg); }
+            10%, 30%, 50%, 70%, 90% { transform: rotate(15deg); }
+            20%, 40%, 60%, 80% { transform: rotate(-15deg); }
+        }
+
+        .save-btn {
+            flex: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #e9ecef;
+            color: #666;
+            padding: 1rem;
+            border: none;
+            border-radius: 15px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        .save-btn:hover {
+            background: var(--navy);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .save-btn.saved {
+            background: var(--success);
+            color: white;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .quick-action-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: white;
+            padding: 1rem;
+            border-radius: 15px;
+            text-decoration: none;
+            color: var(--navy);
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            min-width: 200px;
+        }
+
+        .quick-action-btn:hover {
+            transform: translateY(-5px);
+            background: var(--navy);
+            color: white;
+            box-shadow: 0 10px 25px rgba(0,0,128,0.3);
+        }
+
+        .quick-action-btn i {
+            font-size: 1.5rem;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 4rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            border-top: 5px solid var(--saffron);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,128,0.2);
+        }
+
+        .stat-card i {
+            font-size: 2.5rem;
+            color: var(--navy);
+            margin-bottom: 1rem;
+        }
+
+        .stat-card .number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--navy);
+            line-height: 1.2;
+        }
+
+        .stat-card .label {
+            color: #666;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 60px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 9999;
+            animation: slideInRight 0.3s ease;
+            border-left: 5px solid var(--success);
+            max-width: 350px;
+        }
+
+        .toast i {
+            font-size: 1.5rem;
+            color: var(--success);
+        }
+
+        .toast.error {
+            border-left-color: var(--danger);
+        }
+
+        .toast.error i {
+            color: var(--danger);
+        }
+
+        .toast.warning {
+            border-left-color: var(--warning);
+        }
+
+        .toast.warning i {
+            color: var(--warning);
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        /* Loading State */
+        .loading-state {
+            text-align: center;
+            padding: 4rem;
+            grid-column: 1/-1;
+        }
+
+        .loading-state i {
+            font-size: 4rem;
+            color: var(--navy);
+            margin-bottom: 1.5rem;
+        }
+
+        .loading-state p {
+            color: #666;
+            font-size: 1.2rem;
+        }
+
+        .logo-img {
+            height: 40px;
+            width: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .helplines-hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .helplines-hero p {
+                font-size: 1rem;
+            }
+            
+            .emergency-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 1rem;
+                font-size: 1.1rem;
+            }
+            
+            .helpline-actions {
+                flex-direction: column;
+            }
+            
+            .quick-actions {
+                flex-direction: column;
+            }
+            
+            .quick-action-btn {
+                width: 100%;
+            }
+            
+            .toast {
+                left: 20px;
+                right: 20px;
+                max-width: none;
+            }
+        }
+
+        /* Call Modal */
+        .call-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .call-modal.show {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .call-modal-content {
+            background: white;
+            padding: 3rem;
+            border-radius: 40px;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            animation: scaleIn 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border-top: 5px solid var(--saffron);
+            border-bottom: 5px solid var(--green);
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .call-modal-content i {
+            font-size: 5rem;
+            color: var(--success);
+            margin-bottom: 1.5rem;
+            animation: phone-call 1s infinite;
+        }
+
+        @keyframes phone-call {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(10deg) scale(1.1); }
+            50% { transform: rotate(-10deg) scale(1.1); }
+            75% { transform: rotate(5deg) scale(1.05); }
+        }
+
+        .call-modal-content h2 {
+            color: var(--navy);
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+
+        .call-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--success);
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: #f0f9f0;
+            border-radius: 20px;
+            font-family: monospace;
+            letter-spacing: 3px;
+        }
+
+        .call-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .call-now-btn {
+            flex: 2;
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 1.2rem;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+        }
+
+        .call-now-btn:hover {
+            background: #1e7e34;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(46,125,50,0.4);
+        }
+
+        .call-now-btn:active {
+            transform: translateY(0);
+        }
+
+        .call-cancel-btn {
+            flex: 1;
+            background: #e9ecef;
+            color: #666;
+            border: none;
+            padding: 1.2rem;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .call-cancel-btn:hover {
+            background: #dee2e6;
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <img src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="SecureShe Logo" class="logo-img">
+                <span>SecureShe <span style="color: var(--saffron);">🇮🇳</span></span>
+            </div>
+            <ul class="nav-menu" id="nav-menu">
+                <!-- Dynamic menu will be populated by JavaScript -->
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section with Indian Theme -->
+    <section class="helplines-hero">
+        <h1><i class="fas fa-phone-alt"></i> National Emergency Helplines</h1>
+        <p>24/7 emergency contact numbers for your safety - Government of India</p>
+        <div class="india-badge">
+            <i class="fas fa-map-marker-alt"></i> Republic of India
+        </div>
+    </section>
+
+    <!-- Main Container -->
+    <div class="helplines-container">
+        <!-- Emergency Bar - Indian Numbers -->
+        <div class="emergency-bar">
+            <h2><i class="fas fa-exclamation-triangle"></i> IMMEDIATE EMERGENCY?</h2>
+            <div class="emergency-buttons">
+                <a href="javascript:void(0)" onclick="showCallModal('Police', '100')" class="emergency-btn">
+                    <i class="fas fa-shield-alt"></i>
+                    POLICE: 100
+                </a>
+                <a href="javascript:void(0)" onclick="showCallModal('Women Helpline', '1091')" class="emergency-btn">
+                    <i class="fas fa-fist-raised"></i>
+                    WOMEN: 1091
+                </a>
+                <a href="javascript:void(0)" onclick="showCallModal('Ambulance', '102')" class="emergency-btn">
+                    <i class="fas fa-ambulance"></i>
+                    AMBULANCE: 102
+                </a>
+            </div>
+        </div>
+
+        <!-- National Helplines Grid -->
+        <div id="helplines-grid" class="helplines-grid">
+            <div class="loading-state">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading national helplines...</p>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <a href="sos.html" class="quick-action-btn">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>SOS Emergency</span>
+            </a>
+            <a href="safety-tips.html" class="quick-action-btn">
+                <i class="fas fa-shield-alt"></i>
+                <span>Safety Tips</span>
+            </a>
+            <a href="profile.html" class="quick-action-btn">
+                <i class="fas fa-phone-alt"></i>
+                <span>Emergency Contacts</span>
+            </a>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="stats-section">
+            <div class="stat-card">
+                <i class="fas fa-clock"></i>
+                <div class="number">24/7</div>
+                <div class="label">Always Available</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-phone-volume"></i>
+                <div class="number" id="helplines-count">9</div>
+                <div class="label">National Helplines</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-heart"></i>
+                <div class="number">Free</div>
+                <div class="label">Toll Free Service</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call Modal -->
+    <div id="call-modal" class="call-modal">
+        <div class="call-modal-content">
+            <i class="fas fa-phone-volume"></i>
+            <h2 id="call-service-name">Call Emergency Service</h2>
+            <p>You are about to call</p>
+            <div class="call-number" id="call-number">100</div>
+            <p style="color: #666; margin: 1rem 0;">This will open your phone's dialer</p>
+            <div class="call-actions">
+                <button onclick="makeCall()" class="call-now-btn">
+                    <i class="fas fa-phone"></i> Call Now
+                </button>
+                <button onclick="closeCallModal()" class="call-cancel-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // National level helplines only - English only
+        const nationalHelplines = [
+            {
+                service_name: "National Emergency Number",
+                phone_number: "112",
+                description: "Single emergency number for police, fire, ambulance services",
+                timing: "24x7",
+                icon: "fa-exclamation-triangle",
+                department: "Ministry of Home Affairs"
+            },
+            {
+                service_name: "Police",
+                phone_number: "100",
+                description: "Immediate police assistance for emergencies",
+                timing: "24x7",
+                icon: "fa-shield-alt",
+                department: "Ministry of Home Affairs"
+            },
+            {
+                service_name: "Fire",
+                phone_number: "101",
+                description: "Fire emergency services",
+                timing: "24x7",
+                icon: "fa-fire-extinguisher",
+                department: "Fire Services"
+            },
+            {
+                service_name: "Ambulance",
+                phone_number: "102",
+                description: "Medical emergency services",
+                timing: "24x7",
+                icon: "fa-ambulance",
+                department: "Ministry of Health"
+            },
+            {
+                service_name: "Women Helpline",
+                phone_number: "1091",
+                description: "24x7 assistance for women in distress",
+                timing: "24x7",
+                icon: "fa-fist-raised",
+                department: "Ministry of Women & Child Development"
+            },
+            {
+                service_name: "Child Helpline",
+                phone_number: "1098",
+                description: "Assistance for children in need",
+                timing: "24x7",
+                icon: "fa-child",
+                department: "Ministry of Women & Child Development"
+            },
+            {
+                service_name: "National Commission for Women (NCW)",
+                phone_number: "011-23237166",
+                description: "Women's rights and harassment complaints",
+                timing: "10 AM - 6 PM (Mon-Fri)",
+                icon: "fa-gavel",
+                department: "National Commission for Women"
+            },
+            {
+                service_name: "Anti-Human Trafficking Helpline",
+                phone_number: "14478",
+                description: "Report human trafficking incidents",
+                timing: "24x7",
+                icon: "fa-hand-holding-heart",
+                department: "Ministry of Home Affairs"
+            },
+            {
+                service_name: "Cyber Crime Helpline",
+                phone_number: "1930",
+                description: "Report cyber crimes and online fraud",
+                timing: "24x7",
+                icon: "fa-laptop",
+                department: "Ministry of Home Affairs"
+            }
+        ];
+
+        // Global variables
+        let allHelplines = nationalHelplines;
+        let currentCallNumber = '';
+        let currentCallService = '';
+        let savedContacts = JSON.parse(localStorage.getItem('savedHelplines') || '[]');
+
+        // ===== NAVIGATION UPDATE =====
+        function updateNavigation() {
+            const token = localStorage.getItem('token');
+            const navMenu = document.getElementById('nav-menu');
+            
+            if (!navMenu) return;
+            
+            if (token) {
+                navMenu.innerHTML = `
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="sos.html">SOS</a></li>
+                    <li><a href="helplines.html" class="active">Helplines</a></li>
+                    <li><a href="profile.html">Profile</a></li>
+                    <li><a href="#" id="logout-link">Logout</a></li>
+                `;
+            } else {
+                navMenu.innerHTML = `
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="sos.html">SOS</a></li>
+                    <li><a href="helplines.html" class="active">Helplines</a></li>
+                    <li><a href="login.html">Login</a></li>
+                    <li><a href="register.html" class="btn-register">Register</a></li>
+                `;
+            }
+        }
+
+        // ===== TOAST NOTIFICATION =====
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-exclamation-triangle'}"></i>
+                <div>
+                    <strong>${type === 'success' ? 'Success' : type === 'error' ? 'Error' : 'Warning'}</strong>
+                    <p style="margin-top: 0.2rem; font-size: 0.9rem;">${message}</p>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        // ===== CALL MODAL FUNCTIONS =====
+        function showCallModal(service, number) {
+            currentCallService = service;
+            currentCallNumber = number;
+            document.getElementById('call-service-name').textContent = service;
+            document.getElementById('call-number').textContent = number;
+            document.getElementById('call-modal').classList.add('show');
+        }
+
+        function closeCallModal() {
+            document.getElementById('call-modal').classList.remove('show');
+        }
+
+        function makeCall() {
+            window.location.href = `tel:${currentCallNumber}`;
+            showToast(`📞 Calling ${currentCallService}...`, 'success');
+            setTimeout(closeCallModal, 1000);
+        }
+
+        // ===== SAVE CONTACT =====
+        function saveContact(service, number) {
+            const contactId = `${service}-${number}`;
+            const index = savedContacts.indexOf(contactId);
+            
+            if (index === -1) {
+                savedContacts.push(contactId);
+                showToast(`✅ ${service} saved to your emergency contacts`, 'success');
+                
+                const btn = document.getElementById(`save-${service}-${number}`);
+                if (btn) {
+                    btn.classList.add('saved');
+                    btn.innerHTML = '<i class="fas fa-check"></i> Saved';
+                }
+            } else {
+                savedContacts.splice(index, 1);
+                showToast(`❌ ${service} removed from contacts`, 'warning');
+                
+                const btn = document.getElementById(`save-${service}-${number}`);
+                if (btn) {
+                    btn.classList.remove('saved');
+                    btn.innerHTML = '<i class="fas fa-bookmark"></i> Save';
+                }
+            }
+            
+            localStorage.setItem('savedHelplines', JSON.stringify(savedContacts));
+        }
+
+        // ===== DISPLAY HELPLINES =====
+        function displayHelplines(helplines) {
+            const container = document.getElementById('helplines-grid');
+            
+            container.innerHTML = helplines.map(helpline => {
+                const contactId = `${helpline.service_name}-${helpline.phone_number}`;
+                const isSaved = savedContacts.includes(contactId);
+                
+                return `
+                    <div class="helpline-card national">
+                        <div class="helpline-icon">
+                            <i class="fas ${helpline.icon}"></i>
+                        </div>
+                        <h3>${helpline.service_name}</h3>
+                        <div class="helpline-number">${helpline.phone_number}</div>
+                        <span class="helpline-timing"><i class="fas fa-clock"></i> ${helpline.timing}</span>
+                        <p class="helpline-description">${helpline.description}</p>
+                        <p style="font-size: 0.85rem; color: var(--navy); margin-bottom: 1rem;">
+                            <i class="fas fa-building"></i> ${helpline.department}
+                        </p>
+                        <div class="helpline-actions">
+                            <button onclick="showCallModal('${helpline.service_name}', '${helpline.phone_number}')" class="call-btn">
+                                <i class="fas fa-phone"></i> Call Now
+                            </button>
+                            <button id="save-${helpline.service_name}-${helpline.phone_number}" 
+                                    onclick="saveContact('${helpline.service_name}', '${helpline.phone_number}')" 
+                                    class="save-btn ${isSaved ? 'saved' : ''}">
+                                <i class="fas ${isSaved ? 'fa-check' : 'fa-bookmark'}"></i> ${isSaved ? 'Saved' : 'Save'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('helplines-count').textContent = helplines.length;
+        }
+
+        // ===== INITIALIZE =====
+        document.addEventListener('DOMContentLoaded', function() {
+            updateNavigation();
+            displayHelplines(allHelplines);
+            showToast('🇮🇳 9 national helplines loaded successfully', 'success');
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', (e) => {
+                const modal = document.getElementById('call-modal');
+                if (e.target === modal) {
+                    closeCallModal();
+                }
+            });
+            
+            // Handle logout
+            document.addEventListener('click', (e) => {
+                if (e.target.id === 'logout-link') {
+                    e.preventDefault();
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    updateNavigation();
+                    showToast('Logged out successfully', 'success');
+                    setTimeout(() => window.location.href = '../index.html', 1000);
+                }
+            });
+            
+            // Handle keyboard escape for modal
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeCallModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safety Tips - SecureShe</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6a1b9a;
+            --secondary: #9c27b0;
+            --danger: #d32f2f;
+            --success: #2e7d32;
+            --warning: #ff9800;
+            --info: #1976d2;
+            --light-bg: #f8f9fa;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Hero Section with Image */
+        .tips-hero {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                        url('https://images.unsplash.com/photo-1573164713988-8665fc963095?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            padding: 120px 20px 80px;
+            color: white;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .tips-hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .tips-hero h1 i {
+            color: #ffd700;
+        }
+
+        .tips-hero p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.95;
+        }
+
+        .tips-container {
+            max-width: 1400px;
+            margin: 0 auto 60px;
+            padding: 0 20px;
+        }
+
+        /* Category Filters */
+        .category-filters {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 50px;
+            background: white;
+            color: #666;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-btn i {
+            color: var(--primary);
+        }
+
+        .filter-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(106,27,154,0.3);
+        }
+
+        .filter-btn:hover i {
+            color: white;
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .filter-btn.active i {
+            color: white;
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .tip-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            transition: all 0.3s;
+            position: relative;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tip-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(106,27,154,0.25);
+        }
+
+        .tip-image {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .tip-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .tip-card:hover .tip-image img {
+            transform: scale(1.1);
+        }
+
+        .tip-image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent 0%, rgba(106,27,154,0.8) 100%);
+            display: flex;
+            align-items: flex-end;
+            padding: 1rem;
+        }
+
+        .tip-image-overlay span {
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            background: rgba(255,255,255,0.2);
+            padding: 0.3rem 1rem;
+            border-radius: 50px;
+            backdrop-filter: blur(5px);
+        }
+
+        .tip-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .tip-header i {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.2));
+        }
+
+        .tip-header h3 {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        .tip-body {
+            padding: 2rem;
+        }
+
+        .tip-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .tip-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .tip-list li {
+            padding: 0.8rem 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s;
+        }
+
+        .tip-list li:hover {
+            background: #f8f9fa;
+            padding-left: 0.5rem;
+            border-radius: 10px;
+        }
+
+        .tip-list li:last-child {
+            border-bottom: none;
+        }
+
+        .tip-list i {
+            color: var(--success);
+            font-size: 1.2rem;
+            min-width: 24px;
+        }
+
+        .tip-list li.warning i {
+            color: var(--warning);
+        }
+
+        .tip-list li.danger i {
+            color: var(--danger);
+        }
+
+        .resource-links {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .resource-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: #f0f0f0;
+            border-radius: 50px;
+            text-decoration: none;
+            color: #666;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .resource-link:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .resource-link i {
+            font-size: 0.9rem;
+        }
+
+        .emergency-note {
+            background: linear-gradient(135deg, #fff3cd, #fff9e6);
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 2rem;
+            border-radius: 20px;
+            margin-top: 3rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(255,193,7,0.2);
+        }
+
+        .emergency-note i {
+            font-size: 3rem;
+            color: var(--warning);
+            margin-bottom: 1rem;
+        }
+
+        .emergency-note h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .emergency-note a {
+            color: var(--primary);
+            font-weight: bold;
+            text-decoration: none;
+            padding: 0.5rem 1.5rem;
+            background: white;
+            border-radius: 50px;
+            display: inline-block;
+            margin-top: 1rem;
+            transition: all 0.3s;
+        }
+
+        .emergency-note a:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(106,27,154,0.3);
+        }
+
+        /* Quick Stats Section */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .stat-card i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .stat-card .label {
+            color: #666;
+        }
+
+        .logo-img {
+            height: 40px;
+            width: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        @media (max-width: 768px) {
+            .tips-hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .tips-hero p {
+                font-size: 1rem;
+            }
+            
+            .tips-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .category-filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <img src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="SecureShe Logo" class="logo-img">
+                <span>SecureShe</span>
+            </div>
+            <ul class="nav-menu" id="nav-menu">
+                <!-- Will be populated by JavaScript -->
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="tips-hero">
+        <h1><i class="fas fa-shield-alt"></i> Safety Tips & Resources</h1>
+        <p>Essential safety guidelines to keep you protected in every situation</p>
+    </section>
+
+    <div class="tips-container">
+        <!-- Category Filters -->
+        <div class="category-filters">
+            <button class="filter-btn active" onclick="filterTips('all')">
+                <i class="fas fa-th-large"></i> All Tips
+            </button>
+            <button class="filter-btn" onclick="filterTips('self-defense')">
+                <i class="fas fa-fist-raised"></i> Self Defense
+            </button>
+            <button class="filter-btn" onclick="filterTips('cyber')">
+                <i class="fas fa-laptop"></i> Cyber Safety
+            </button>
+            <button class="filter-btn" onclick="filterTips('travel')">
+                <i class="fas fa-plane"></i> Travel Safety
+            </button>
+            <button class="filter-btn" onclick="filterTips('emergency')">
+                <i class="fas fa-ambulance"></i> Emergency Prep
+            </button>
+            <button class="filter-btn" onclick="filterTips('home')">
+                <i class="fas fa-home"></i> Home Safety
+            </button>
+            <button class="filter-btn" onclick="filterTips('workplace')">
+                <i class="fas fa-briefcase"></i> Workplace
+            </button>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="quick-stats">
+            <div class="stat-card">
+                <i class="fas fa-check-circle"></i>
+                <div class="number">50+</div>
+                <div class="label">Safety Tips</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-users"></i>
+                <div class="number">10k+</div>
+                <div class="label">Women Protected</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-clock"></i>
+                <div class="number">24/7</div>
+                <div class="label">Support Available</div>
+            </div>
+        </div>
+
+        <!-- Tips Grid -->
+        <div class="tips-grid" id="tips-grid">
+            <!-- Self Defense Card -->
+            <div class="tip-card" data-category="self-defense">
+                <div class="tip-image">
+                    <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Self Defense">
+                    <div class="tip-image-overlay">
+                        <span><i class="fas fa-fist-raised"></i> 6 Tips</span>
+                    </div>
+                </div>
+                <div class="tip-header">
+                    <i class="fas fa-fist-raised"></i>
+                    <h3>Self Defense</h3>
+                </div>
+                <div class="tip-body">
+                    <div class="tip-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">6</div>
+                            <div class="stat-label">Essential Tips</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">24/7</div>
+                            <div class="stat-label">Practice</div>
+                        </div>
+                    </div>
+                    <ul class="tip-list">
+                        <li><i class="fas fa-check-circle"></i> Always be aware of your surroundings</li>
+                        <li><i class="fas fa-check-circle"></i> Trust your instincts - if it feels wrong, leave</li>
+                        <li><i class="fas fa-check-circle"></i> Carry personal safety alarms</li>
+                        <li><i class="fas fa-check-circle"></i> Learn basic self-defense moves</li>
+                        <li><i class="fas fa-check-circle"></i> Keep keys in hand when walking to your car</li>
+                        <li><i class="fas fa-check-circle"></i> Avoid walking alone at night</li>
+                    </ul>
+                    <div class="resource-links">
+                        <a href="#" class="resource-link"><i class="fas fa-video"></i> Watch Tutorial</a>
+                        <a href="#" class="resource-link"><i class="fas fa-book"></i> Guide PDF</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cyber Safety Card -->
+            <div class="tip-card" data-category="cyber">
+                <div class="tip-image">
+                    <img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Cyber Safety">
+                    <div class="tip-image-overlay">
+                        <span><i class="fas fa-laptop"></i> 6 Tips</span>
+                    </div>
+                </div>
+                <div class="tip-header">
+                    <i class="fas fa-laptop"></i>
+                    <h3>Cyber Safety</h3>
+                </div>
+                <div class="tip-body">
+                    <div class="tip-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">6</div>
+                            <div class="stat-label">Security Tips</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">2FA</div>
+                            <div class="stat-label">Enable</div>
+                        </div>
+                    </div>
+                    <ul class="tip-list">
+                        <li><i class="fas fa-check-circle"></i> Use strong, unique passwords</li>
+                        <li><i class="fas fa-check-circle"></i> Enable two-factor authentication</li>
+                        <li><i class="fas fa-check-circle"></i> Don't share personal info online</li>
+                        <li><i class="fas fa-check-circle"></i> Be careful with social media posts</li>
+                        <li><i class="fas fa-check-circle"></i> Avoid public Wi-Fi for sensitive transactions</li>
+                        <li><i class="fas fa-check-circle"></i> Keep software updated</li>
+                    </ul>
+                    <div class="resource-links">
+                        <a href="#" class="resource-link"><i class="fas fa-shield-alt"></i> Security Guide</a>
+                        <a href="#" class="resource-link"><i class="fas fa-lock"></i> Password Tips</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Travel Safety Card -->
+            <div class="tip-card" data-category="travel">
+                <div class="tip-image">
+                    <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Travel Safety">
+                    <div class="tip-image-overlay">
+                        <span><i class="fas fa-plane"></i> 6 Tips</span>
+                    </div>
+                </div>
+                <div class="tip-header">
+                    <i class="fas fa-plane"></i>
+                    <h3>Travel Safety</h3>
+                </div>
+                <div class="tip-body">
+                    <div class="tip-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">6</div>
+                            <div class="stat-label">Travel Tips</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">24/7</div>
+                            <div class="stat-label">Support</div>
+                        </div>
+                    </div>
+                    <ul class="tip-list">
+                        <li><i class="fas fa-check-circle"></i> Share your itinerary with trusted contacts</li>
+                        <li><i class="fas fa-check-circle"></i> Keep emergency numbers handy</li>
+                        <li><i class="fas fa-check-circle"></i> Stay in well-lit, populated areas</li>
+                        <li><i class="fas fa-check-circle"></i> Use official transportation services</li>
+                        <li><i class="fas fa-check-circle"></i> Keep copies of important documents</li>
+                        <li><i class="fas fa-check-circle"></i> Check travel advisories before going</li>
+                    </ul>
+                    <div class="resource-links">
+                        <a href="#" class="resource-link"><i class="fas fa-map"></i> Safe Routes</a>
+                        <a href="#" class="resource-link"><i class="fas fa-phone-alt"></i> Emergency Numbers</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Emergency Prep Card -->
+            <div class="tip-card" data-category="emergency">
+                <div class="tip-image">
+                    <img src="https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Emergency Prep">
+                    <div class="tip-image-overlay">
+                        <span><i class="fas fa-ambulance"></i> 6 Tips</span>
+                    </div>
+                </div>
+                <div class="tip-header">
+                    <i class="fas fa-ambulance"></i>
+                    <h3>Emergency Prep</h3>
+                </div>
+                <div class="tip-body">
+                    <div class="tip-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">6</div>
+                            <div class="stat-label">Prep Tips</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">24/7</div>
+                            <div class="stat-label">Ready</div>
+                        </div>
+                    </div>
+                    <ul class="tip-list">
+                        <li><i class="fas fa-check-circle"></i> Save emergency contacts in phone</li>
+                        <li><i class="fas fa-check-circle"></i> Keep a small first aid kit</li>
+                        <li><i class="fas fa-check-circle"></i> Know basic first aid</li>
+                        <li><i class="fas fa-check-circle"></i> Have a emergency plan</li>
+                        <li><i class="fas fa-check-circle"></i> Keep phone charged</li>
+                        <li><i class="fas fa-check-circle"></i> Know nearest hospital location</li>
+                    </ul>
+                    <div class="resource-links">
+                        <a href="#" class="resource-link"><i class="fas fa-heartbeat"></i> First Aid Guide</a>
+                        <a href="#" class="resource-link"><i class="fas fa-clinic-medical"></i> Nearby Hospitals</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Home Safety Card -->
+            <div class="tip-card" data-category="home">
+                <div class="tip-image">
+                    <img src="https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Home Safety">
+                    <div class="tip-image-overlay">
+                        <span><i class="fas fa-home"></i> 6 Tips</span>
+                    </div>
+                </div>
+                <div class="tip-header">
+                    <i class="fas fa-home"></i>
+                    <h3>Home Safety</h3>
+                </div>
+                <div class="tip-body">
+                    <div class="tip-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">6</div>
+                            <div class="stat-label">Home Tips</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">24/7</div>
+                            <div class="stat-label">Secure</div>
+                        </div>
+                    </div>
+                    <ul class="tip-list">
+                        <li><i class="fas fa-check-circle"></i> Keep doors and windows locked</li>
+                        <li><i class="fas fa-check-circle"></i> Install peephole in door</li>
+                        <li><i class="fas fa-check-circle"></i> Don't open door to strangers</li>
+                        <li><i class="fas fa-check-circle"></i> Use timers for lights when away</li>
+                        <li><i class="fas fa-check-circle"></i> Consider security cameras</li>
+                        <li><i class="fas fa-check-circle"></i> Get to know your neighbors</li>
+                    </ul>
+                    <div class="resource-links">
+                        <a href="#" class="resource-link"><i class="fas fa-video"></i> Security Systems</a>
+                        <a href="#" class="resource-link"><i class="fas fa-lightbulb"></i> Lighting Tips</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workplace Safety Card -->
+            <div class="tip-card" data-category="workplace">
+                <div class="tip-image">
+                    <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Workplace Safety">
+                    <div class="tip-image-overlay">
+                        <span><i class="fas fa-briefcase"></i> 6 Tips</span>
+                    </div>
+                </div>
+                <div class="tip-header">
+                    <i class="fas fa-briefcase"></i>
+                    <h3>Workplace Safety</h3>
+                </div>
+                <div class="tip-body">
+                    <div class="tip-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">6</div>
+                            <div class="stat-label">Work Tips</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">9-5</div>
+                            <div class="stat-label">Coverage</div>
+                        </div>
+                    </div>
+                    <ul class="tip-list">
+                        <li><i class="fas fa-check-circle"></i> Know emergency exits</li>
+                        <li><i class="fas fa-check-circle"></i> Report suspicious activity</li>
+                        <li><i class="fas fa-check-circle"></i> Don't work late alone</li>
+                        <li><i class="fas fa-check-circle"></i> Park in well-lit areas</li>
+                        <li><i class="fas fa-check-circle"></i> Escort to car if working late</li>
+                        <li><i class="fas fa-check-circle"></i> Know HR policies on harassment</li>
+                    </ul>
+                    <div class="resource-links">
+                        <a href="#" class="resource-link"><i class="fas fa-gavel"></i> HR Policies</a>
+                        <a href="#" class="resource-link"><i class="fas fa-hand-holding-heart"></i> Support</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Emergency Note -->
+        <div class="emergency-note">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h3>Emergency? Don't hesitate!</h3>
+            <p>In case of immediate danger, use our SOS feature or call emergency services right away.</p>
+            <a href="sos.html"><i class="fas fa-exclamation-circle"></i> Trigger SOS Now</a>
+            <a href="helplines.html" style="margin-left: 1rem;"><i class="fas fa-phone-alt"></i> Emergency Helplines</a>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <img src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="SecureShe Logo" style="width: 50px; height: 50px; border-radius: 50%; margin-bottom: 1rem;">
+                    <h3>SecureShe</h3>
+                    <p>Empowering women through technology and safety education.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Emergency Numbers</h3>
+                    <ul>
+                        <li><i class="fas fa-phone"></i> Police: 100</li>
+                        <li><i class="fas fa-phone"></i> Women Helpline: 1091</li>
+                        <li><i class="fas fa-phone"></i> Ambulance: 102</li>
+                        <li><i class="fas fa-phone"></i> Child Helpline: 1098</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="sos.html">SOS Emergency</a></li>
+                        <li><a href="helplines.html">Helplines</a></li>
+                        <li><a href="profile.html">My Profile</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 SecureShe. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Update navigation
+        function updateNavigation() {
+            const token = localStorage.getItem('token');
+            const navMenu = document.getElementById('nav-menu');
+            
+            if (!navMenu) return;
+            
+            if (token) {
+                navMenu.innerHTML = `
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="sos.html">SOS</a></li>
+                    <li><a href="helplines.html">Helplines</a></li>
+                    <li><a href="safety-tips.html" class="active">Safety Tips</a></li>
+                    <li><a href="profile.html">Profile</a></li>
+                    <li><a href="#" id="logout-link">Logout</a></li>
+                `;
+            } else {
+                navMenu.innerHTML = `
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="sos.html">SOS</a></li>
+                    <li><a href="helplines.html">Helplines</a></li>
+                    <li><a href="safety-tips.html" class="active">Safety Tips</a></li>
+                    <li><a href="login.html">Login</a></li>
+                    <li><a href="register.html" class="btn-register">Register</a></li>
+                `;
+            }
+        }
+
+        // Filter tips by category
+        function filterTips(category) {
+            const cards = document.querySelectorAll('.tip-card');
+            const buttons = document.querySelectorAll('.filter-btn');
+            
+            // Update active button
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.toLowerCase().includes(category) || 
+                    (category === 'all' && btn.textContent.includes('All'))) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Filter cards
+            cards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'block';
+                    card.style.animation = 'fadeIn 0.5s ease';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateNavigation();
+            
+            // Add animation to cards
+            const cards = document.querySelectorAll('.tip-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+
+        // Logout handler
+        document.addEventListener('click', (e) => {
+            if (e.target.id === 'logout-link') {
+                e.preventDefault();
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                updateNavigation();
+                
+                // Show toast notification
+                const toast = document.createElement('div');
+                toast.className = 'toast success';
+                toast.innerHTML = '<i class="fas fa-check-circle"></i> Logged out successfully';
+                toast.style.cssText = `
+                    position: fixed;
+                    bottom: 20px;
+                    right: 20px;
+                    background: var(--success);
+                    color: white;
+                    padding: 1rem 2rem;
+                    border-radius: 50px;
+                    z-index: 9999;
+                    animation: slideIn 0.3s ease;
+                `;
+                document.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - SecureShe</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Additional styles for login page */
+        .auth-container {
+            padding: 120px 20px 60px;
+            min-height: 80vh;
+            background: linear-gradient(rgba(106, 27, 154, 0.7), rgba(156, 39, 176, 0.7)), 
+                        url('https://images.unsplash.com/photo-1521791136064-7986c2920216?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-box {
+            max-width: 450px;
+            width: 100%;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            animation: slideUp 0.5s ease;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-header img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            border: 3px solid var(--primary);
+        }
+
+        .auth-header h2 {
+            color: var(--primary);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-header p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 42px;
+            color: var(--primary);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(106, 27, 154, 0.1);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(106, 27, 154, 0.3);
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .auth-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .auth-footer a:hover {
+            color: var(--secondary);
+        }
+
+        .message {
+            margin-top: 1rem;
+            text-align: center;
+            padding: 0.75rem;
+            border-radius: 10px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .message.error {
+            background: #fee;
+            color: var(--danger);
+            border: 1px solid #fcc;
+        }
+
+        .message.success {
+            background: #efe;
+            color: var(--success);
+            border: 1px solid #cfc;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .logo-img {
+            height: 40px;
+            width: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <img src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="SecureShe Logo" class="logo-img">
+                <span>SecureShe</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="sos.html">SOS</a></li>
+                <li><a href="helplines.html">Helplines</a></li>
+                <li><a href="login.html" class="active">Login</a></li>
+                <li><a href="register.html" class="btn-register">Register</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="auth-container">
+        <div class="auth-box">
+            <div class="auth-header">
+                <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Welcome">
+                <h2>Welcome Back!</h2>
+                <p>Login to access your safety network</p>
+            </div>
+            
+            <form id="login-form">
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="input-group">
+                    <label>Password</label>
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" placeholder="Enter your password" required>
+                </div>
+                
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                
+                <div class="auth-footer">
+                    <p>Don't have an account? <a href="register.html">Register here</a></p>
+                    <p style="margin-top: 0.5rem;"><a href="forgot-password.html">Forgot Password?</a></p>
+                </div>
+            </form>
+            <div id="message" class="message"></div>
+        </div>
+    </div>
+
+    <script>
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const messageDiv = document.getElementById('message');
+        
+        messageDiv.className = 'message';
+        messageDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+        
+        try {
+            const response = await fetch('http://localhost:5000/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                localStorage.setItem('token', data.access_token);
+                localStorage.setItem('user', JSON.stringify(data.user));
+                messageDiv.className = 'message success';
+                messageDiv.innerHTML = '<i class="fas fa-check-circle"></i> Login successful! Redirecting...';
+                setTimeout(() => {
+                    window.location.href = '../index.html';
+                }, 1000);
+            } else {
+                messageDiv.className = 'message error';
+                messageDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${data.error || 'Login failed'}`;
+            }
+        } catch (error) {
+            messageDiv.className = 'message error';
+            messageDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Connection error. Make sure server is running.';
+        }
+    });
+    </script>
+</body>
+</html>
