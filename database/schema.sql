@@ -68,6 +68,22 @@ CREATE TABLE IF NOT EXISTS sos_notifications (
     INDEX idx_sos (sos_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Location sharing table (MISSING - ADD THIS AT THE END)
+CREATE TABLE IF NOT EXISTS location_shares (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    latitude DECIMAL(10, 8) NOT NULL,
+    longitude DECIMAL(11, 8) NOT NULL,
+    accuracy FLOAT,
+    mode ENUM('live', 'one_time') DEFAULT 'live',
+    recipients JSON,
+    is_active BOOLEAN DEFAULT TRUE,
+    started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ended_at TIMESTAMP NULL,
+    last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_user_active (user_id, is_active)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 -- Incident reports table
 CREATE TABLE IF NOT EXISTS reports (
     id INT PRIMARY KEY AUTO_INCREMENT,
