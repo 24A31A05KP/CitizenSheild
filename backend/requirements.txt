@@ -1,7 +1,9 @@
+# Replace PyMySQL with psycopg2 for PostgreSQL
+psycopg2-binary==2.9.9
+# Keep other dependencies
 Flask==2.3.3
 flask-cors==4.0.0
 flask-jwt-extended==4.5.2
-PyMySQL==1.1.0
 bcrypt==4.0.1
 python-dotenv==1.0.0
-gunicorn==21.2.0  # Add this line
+gunicorn==21.2.0
