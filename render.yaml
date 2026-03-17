@@ -2,23 +2,38 @@ services:
   - type: web
     name: secureshe-backend
     runtime: python
-    repo: https://github.com/24A31A05KP/SecureShe
-    branch: main
-    rootDir: backend
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app
+    startCommand: gunicorn run:app
     envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
       - key: DB_HOST
-        value: gateway01.ap-southeast-1.prod.aws.tidbcloud.com
+        fromDatabase:
+          name: secureshe-db
+          property: host
       - key: DB_USER
-        value: 3Y4R2Ha3Vvvx6Zf.root
+        fromDatabase:
+          name: secureshe-db
+          property: user
       - key: DB_PASSWORD
-        sync: false
+        fromDatabase:
+          name: secureshe-db
+          property: password
       - key: DB_NAME
-        value: secureshe_db
+        fromDatabase:
+          name: secureshe-db
+          property: database
       - key: DB_PORT
-        value: 4000
+        value: 3306
       - key: JWT_SECRET_KEY
         generateValue: true
-      - key: SSL_CA_PATH
-        value: /etc/secrets/isrgrootx1.pem
+      - key: FLASK_ENV
+        value: production
+      - key: CORS_ORIGINS
+        value: https://your-frontend-domain.com
+
+databases:
+  - name: secureshe-db
+    databaseName: secureshe_db
+    user: secureshe_user
+    plan: free
