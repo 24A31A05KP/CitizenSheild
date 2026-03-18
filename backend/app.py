@@ -23,7 +23,12 @@ def create_app():
     app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
     
     # Initialize extensions
-    CORS(app, origins=['http://localhost:5500', 'http://127.0.0.1:5500'])
+    CORS(app, origins=[
+    'http://localhost:5500',
+    'http://127.0.0.1:5500',
+    'https://24a31a05kp.github.io',
+    'https://*.github.io'
+], supports_credentials=True)
     jwt = JWTManager(app)
     
     # Setup logging
