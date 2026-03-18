@@ -24,12 +24,15 @@ def create_app():
     
     # Initialize extensions
     CORS(app, origins=[
-    'http://localhost:5500',
-    'http://127.0.0.1:5500',
-    'https://24a31a05kp.github.io',
-    'https://*.github.io'
-], supports_credentials=True)
-    jwt = JWTManager(app)
+    "http://localhost:5500",
+    "http://127.0.0.1:5500",
+    "https://24a31a05kp.github.io",
+    "https://*.github.io"
+], supports_credentials=True, allow_headers=[
+    "Content-Type",
+    "Authorization",
+    "Access-Control-Allow-Credentials"
+])
     
     # Setup logging
     setup_logging(app)
