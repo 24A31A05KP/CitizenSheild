@@ -24,15 +24,36 @@ def create_app():
     
     # Initialize extensions
     CORS(app, origins=[
-    "http://localhost:5500",
-    "http://127.0.0.1:5500",
-    "https://24a31a05kp.github.io",
-    "https://*.github.io"
-], supports_credentials=True, allow_headers=[
-    "Content-Type",
-    "Authorization",
-    "Access-Control-Allow-Credentials"
-])
+        "http://localhost:5500",
+        "http://127.0.0.1:5500",
+        "https://24a31a05kp.github.io",
+        "https://*.github.io"
+    ], supports_credentials=True, allow_headers=[
+        "Content-Type",
+        "Authorization",
+        "Access-Control-Allow-Credentials"
+    ])
+    
+    # 🔥 ADD THIS OPTIONS HANDLER HERE 🔥
+    @app.before_request
+    def handle_preflight():
+        if request.method == "OPTIONS":
+            response = app.make_default_options_response()
+            
+            # Get the origin from the request
+            origin = request.headers.get('Origin')
+            
+            # Add CORS headers to the response
+            headers = {
+                'Access-Control-Allow-Origin': origin if origin else '*',
+                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
+                'Access-Control-Allow-Credentials': 'true',
+                'Access-Control-Max-Age': '86400'
+            }
+            
+            response.headers.extend(headers)
+            return response
     
     # Setup logging
     setup_logging(app)
