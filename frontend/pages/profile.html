@@ -722,7 +722,7 @@
             try {
                 console.log('Loading profile with token:', token);
                 
-                const response = await fetch('http://localhost:5000/api/profile', {
+                const response = await fetch('https://secureshe-bzxg.onrender.com/api/profile', {
                     method: 'GET',
                     headers: { 
                         'Authorization': `Bearer ${token}`,
@@ -816,7 +816,7 @@
         // Load SOS history
         async function loadSOSHistory() {
             try {
-                const response = await fetch('http://localhost:5000/api/sos/history', {
+                const response = await fetch('https://secureshe-bzxg.onrender.com/api/sos/history', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 
@@ -878,7 +878,7 @@
             try {
                 showMessage('Adding contact...', 'success');
                 
-                const response = await fetch('http://localhost:5000/api/profile/contacts', {
+                const response = await fetch('https://secureshe-bzxg.onrender.com/api/profile/contacts', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -924,7 +924,7 @@
             if (!currentContactToDelete) return;
 
             try {
-                const response = await fetch(`http://localhost:5000/api/profile/contacts/${currentContactToDelete}`, {
+                const response = await fetch(`http://localhttps://secureshe-bzxg.onrender.com/apihost:5000/api/profile/contacts/${currentContactToDelete}`, {
                     method: 'DELETE',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -946,7 +946,7 @@
         // Set primary contact
         window.setPrimaryContact = async (contactId) => {
             try {
-                const response = await fetch(`http://localhost:5000/api/profile/contacts/${contactId}/primary`, {
+                const response = await fetch(`https://secureshe-bzxg.onrender.com/api/profile/contacts/${contactId}/primary`, {
                     method: 'PUT',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -982,7 +982,7 @@
             }
 
             try {
-                const response = await fetch('http://localhost:5000/api/profile/update', {
+                const response = await fetch('https://secureshe-bzxg.onrender.com/api/profile/update', {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
