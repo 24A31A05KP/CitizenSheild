@@ -141,6 +141,8 @@ def register_routes(app):
     def register():
         # Handle preflight OPTIONS request
         if request.method == 'OPTIONS':
+            print("🔵 OPTIONS request received for /api/auth/register")
+            print(f"🔵 Origin: {request.headers.get('Origin')}")
             response = jsonify({'status': 'ok'})
             origin = request.headers.get('Origin')
             if origin:
@@ -148,6 +150,7 @@ def register_routes(app):
                 response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
                 response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
                 response.headers['Access-Control-Allow-Credentials'] = 'true'
+                print("🔵 Headers set:", dict(response.headers))
             return response, 200
             
         """Register a new user"""
