@@ -54,6 +54,18 @@ def create_app():
     # Register routes
     register_routes(app)
     
+    # 🔥 ADD THIS AFTER ALL ROUTES ARE REGISTERED 🔥
+    @app.after_request
+    def add_cors_headers(response):
+        """Add CORS headers to all responses"""
+        origin = request.headers.get('Origin')
+        if origin and (origin == 'https://24a31a05kp.github.io' or 
+                      origin.endswith('github.io') or 
+                      origin.endswith('localhost:5500')):
+            response.headers['Access-Control-Allow-Origin'] = origin
+            response.headers['Access-Control-Allow-Credentials'] = 'true'
+        return response
+    
     return app
 
 def setup_logging(app):
@@ -125,8 +137,19 @@ def register_routes(app):
     
     # ============ AUTH ROUTES ============
     
-    @app.route('/api/auth/register', methods=['POST'])
+    @app.route('/api/auth/register', methods=['OPTIONS', 'POST'])
     def register():
+        # Handle preflight OPTIONS request
+        if request.method == 'OPTIONS':
+            response = jsonify({'status': 'ok'})
+            origin = request.headers.get('Origin')
+            if origin:
+                response.headers['Access-Control-Allow-Origin'] = origin
+                response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+                response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+                response.headers['Access-Control-Allow-Credentials'] = 'true'
+            return response, 200
+            
         """Register a new user"""
         try:
             data = request.get_json()
@@ -196,8 +219,19 @@ def register_routes(app):
             app.logger.error(f"Registration error: {str(e)}")
             return jsonify({'error': 'Registration failed'}), 500
     
-    @app.route('/api/auth/login', methods=['POST'])
+    @app.route('/api/auth/login', methods=['OPTIONS', 'POST'])
     def login():
+        # Handle preflight OPTIONS request
+        if request.method == 'OPTIONS':
+            response = jsonify({'status': 'ok'})
+            origin = request.headers.get('Origin')
+            if origin:
+                response.headers['Access-Control-Allow-Origin'] = origin
+                response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+                response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+                response.headers['Access-Control-Allow-Credentials'] = 'true'
+            return response, 200
+            
         """Login user"""
         try:
             data = request.get_json()
@@ -250,9 +284,20 @@ def register_routes(app):
     
     # ============ PROFILE ROUTES ============
     
-    @app.route('/api/profile', methods=['GET'])
+    @app.route('/api/profile', methods=['GET', 'OPTIONS'])
     @jwt_required()
     def profile():
+        # Handle preflight OPTIONS request
+        if request.method == 'OPTIONS':
+            response = jsonify({'status': 'ok'})
+            origin = request.headers.get('Origin')
+            if origin:
+                response.headers['Access-Control-Allow-Origin'] = origin
+                response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+                response.headers['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
+                response.headers['Access-Control-Allow-Credentials'] = 'true'
+            return response, 200
+            
         """Get user profile"""
         try:
             user_id = get_jwt_identity()
@@ -308,9 +353,20 @@ def register_routes(app):
             traceback.print_exc()
             return jsonify({'error': str(e)}), 500
     
-    @app.route('/api/profile/update', methods=['PUT'])
+    @app.route('/api/profile/update', methods=['PUT', 'OPTIONS'])
     @jwt_required()
     def update_user_profile():
+        # Handle preflight OPTIONS request
+        if request.method == 'OPTIONS':
+            response = jsonify({'status': 'ok'})
+            origin = request.headers.get('Origin')
+            if origin:
+                response.headers['Access-Control-Allow-Origin'] = origin
+                response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+                response.headers['Access-Control-Allow-Methods'] = 'PUT, OPTIONS'
+                response.headers['Access-Control-Allow-Credentials'] = 'true'
+            return response, 200
+            
         """Update user profile (single version)"""
         try:
             user_id = get_jwt_identity()
@@ -393,9 +449,20 @@ def register_routes(app):
     
     # ============ EMERGENCY CONTACTS ROUTES ============
     
-    @app.route('/api/profile/contacts', methods=['POST'])
+    @app.route('/api/profile/contacts', methods=['POST', 'OPTIONS'])
     @jwt_required()
     def add_emergency_contact():
+        # Handle preflight OPTIONS request
+        if request.method == 'OPTIONS':
+            response = jsonify({'status': 'ok'})
+            origin = request.headers.get('Origin')
+            if origin:
+                response.headers['Access-Control-Allow-Origin'] = origin
+                response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+                response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+                response.headers['Access-Control-Allow-Credentials'] = 'true'
+            return response, 200
+            
         """Add emergency contact"""
         try:
             user_id = get_jwt_identity()
@@ -442,9 +509,20 @@ def register_routes(app):
             traceback.print_exc()
             return jsonify({'error': str(e)}), 500
     
-    @app.route('/api/profile/contacts/<int:contact_id>', methods=['DELETE'])
+    @app.route('/api/profile/contacts/<int:contact_id>', methods=['DELETE', 'OPTIONS'])
     @jwt_required()
     def delete_emergency_contact(contact_id):
+        # Handle preflight OPTIONS request
+        if request.method == 'OPTIONS':
+            response = jsonify({'status': 'ok'})
+            origin = request.headers.get('Origin')
+            if origin:
+                response.headers['Access-Control-Allow-Origin'] = origin
+                response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+                response.headers['Access-Control-Allow-Methods'] = 'DELETE, OPTIONS'
+                response.headers['Access-Control-Allow-Credentials'] = 'true'
+            return response, 200
+            
         """Delete emergency contact"""
         try:
             user_id = get_jwt_identity()
@@ -479,9 +557,20 @@ def register_routes(app):
             app.logger.error(f"Delete contact error: {str(e)}")
             return jsonify({'error': 'Failed to delete contact'}), 500
     
-    @app.route('/api/profile/contacts/<int:contact_id>/primary', methods=['PUT'])
+    @app.route('/api/profile/contacts/<int:contact_id>/primary', methods=['PUT', 'OPTIONS'])
     @jwt_required()
     def set_primary_contact(contact_id):
+        # Handle preflight OPTIONS request
+        if request.method == 'OPTIONS':
+            response = jsonify({'status': 'ok'})
+            origin = request.headers.get('Origin')
+            if origin:
+                response.headers['Access-Control-Allow-Origin'] = origin
+                response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+                response.headers['Access-Control-Allow-Methods'] = 'PUT, OPTIONS'
+                response.headers['Access-Control-Allow-Credentials'] = 'true'
+            return response, 200
+            
         """Set a contact as primary"""
         try:
             user_id = get_jwt_identity()
@@ -509,8 +598,19 @@ def register_routes(app):
     
     # ============ HELPLINE ROUTES ============
     
-    @app.route('/api/helplines', methods=['GET'])
+    @app.route('/api/helplines', methods=['GET', 'OPTIONS'])
     def get_helplines():
+        # Handle preflight OPTIONS request
+        if request.method == 'OPTIONS':
+            response = jsonify({'status': 'ok'})
+            origin = request.headers.get('Origin')
+            if origin:
+                response.headers['Access-Control-Allow-Origin'] = origin
+                response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+                response.headers['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
+                response.headers['Access-Control-Allow-Credentials'] = 'true'
+            return response, 200
+            
         """Get all helplines"""
         try:
             country = request.args.get('country')
@@ -533,9 +633,20 @@ def register_routes(app):
     
     # ============ SOS ROUTES ============
     
-    @app.route('/api/sos/trigger', methods=['POST'])
+    @app.route('/api/sos/trigger', methods=['POST', 'OPTIONS'])
     @jwt_required()
     def trigger_sos():
+        # Handle preflight OPTIONS request
+        if request.method == 'OPTIONS':
+            response = jsonify({'status': 'ok'})
+            origin = request.headers.get('Origin')
+            if origin:
+                response.headers['Access-Control-Allow-Origin'] = origin
+                response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+                response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+                response.headers['Access-Control-Allow-Credentials'] = 'true'
+            return response, 200
+            
         """Trigger SOS alert"""
         try:
             user_id = get_jwt_identity()
@@ -582,9 +693,20 @@ def register_routes(app):
             app.logger.error(f"SOS trigger error: {str(e)}")
             return jsonify({'error': 'Failed to trigger SOS'}), 500
     
-    @app.route('/api/sos/history', methods=['GET'])
+    @app.route('/api/sos/history', methods=['GET', 'OPTIONS'])
     @jwt_required()
     def get_sos_history():
+        # Handle preflight OPTIONS request
+        if request.method == 'OPTIONS':
+            response = jsonify({'status': 'ok'})
+            origin = request.headers.get('Origin')
+            if origin:
+                response.headers['Access-Control-Allow-Origin'] = origin
+                response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+                response.headers['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
+                response.headers['Access-Control-Allow-Credentials'] = 'true'
+            return response, 200
+            
         """Get user's SOS history"""
         try:
             user_id = get_jwt_identity()
@@ -606,9 +728,20 @@ def register_routes(app):
     
     # ============ LOCATION SHARING ROUTES ============
     
-    @app.route('/api/location/share', methods=['POST'])
+    @app.route('/api/location/share', methods=['POST', 'OPTIONS'])
     @jwt_required()
     def share_location():
+        # Handle preflight OPTIONS request
+        if request.method == 'OPTIONS':
+            response = jsonify({'status': 'ok'})
+            origin = request.headers.get('Origin')
+            if origin:
+                response.headers['Access-Control-Allow-Origin'] = origin
+                response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+                response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+                response.headers['Access-Control-Allow-Credentials'] = 'true'
+            return response, 200
+            
         """Share live location"""
         try:
             user_id = get_jwt_identity()
@@ -643,9 +776,20 @@ def register_routes(app):
             app.logger.error(f"Location share error: {str(e)}")
             return jsonify({'error': str(e)}), 500
 
-    @app.route('/api/location/stop-sharing', methods=['POST'])
+    @app.route('/api/location/stop-sharing', methods=['POST', 'OPTIONS'])
     @jwt_required()
     def stop_sharing():
+        # Handle preflight OPTIONS request
+        if request.method == 'OPTIONS':
+            response = jsonify({'status': 'ok'})
+            origin = request.headers.get('Origin')
+            if origin:
+                response.headers['Access-Control-Allow-Origin'] = origin
+                response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+                response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+                response.headers['Access-Control-Allow-Credentials'] = 'true'
+            return response, 200
+            
         """Stop sharing location"""
         try:
             user_id = get_jwt_identity()
@@ -662,9 +806,20 @@ def register_routes(app):
             app.logger.error(f"Stop sharing error: {str(e)}")
             return jsonify({'error': str(e)}), 500
 
-    @app.route('/api/location/contacts/<int:contact_id>', methods=['GET'])
+    @app.route('/api/location/contacts/<int:contact_id>', methods=['GET', 'OPTIONS'])
     @jwt_required()
     def get_contact_location(contact_id):
+        # Handle preflight OPTIONS request
+        if request.method == 'OPTIONS':
+            response = jsonify({'status': 'ok'})
+            origin = request.headers.get('Origin')
+            if origin:
+                response.headers['Access-Control-Allow-Origin'] = origin
+                response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+                response.headers['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
+                response.headers['Access-Control-Allow-Credentials'] = 'true'
+            return response, 200
+            
         """Get live location of a contact (for trusted contacts)"""
         try:
             user_id = get_jwt_identity()
@@ -693,6 +848,7 @@ def register_routes(app):
         except Exception as e:
             app.logger.error(f"Get contact location error: {str(e)}")
             return jsonify({'error': str(e)}), 500
+
 if __name__ == '__main__':
     app = create_app()
     port = int(os.getenv('PORT', 5000))
