@@ -1,3 +1,4 @@
+from flask_cors import CORS, cross_origin
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
@@ -22,7 +23,23 @@ def create_app():
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=1)
     app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
     
-    # Initialize extensions (remove the old CORS line)
+    # 🔥 COMPLETE CORS CONFIGURATION 🔥
+    CORS(app, 
+         resources={r"/api/*": {
+             "origins": [
+                 "http://localhost:5500",
+                 "http://127.0.0.1:5500",
+                 "https://24a31a05kp.github.io",
+                 "https://*.github.io"
+             ],
+             "methods": ["GET", "HEAD", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"],
+             "allow_headers": ["Content-Type", "Authorization", "X-Requested-With"],
+             "expose_headers": ["Content-Type", "Authorization"],
+             "supports_credentials": True,
+             "max_age": 86400,
+             "send_wildcard": False,
+             "always_send": True
+         }})
     
     # Setup logging
     setup_logging(app)
@@ -36,33 +53,6 @@ def create_app():
     
     # Register routes
     register_routes(app)
-    
-    # 🔥 ADD THIS AFTER ALL ROUTES ARE REGISTERED 🔥
-    @app.after_request
-    def after_request(response):
-        # Get the origin from the request
-        origin = request.headers.get('Origin')
-        
-        # Allow specific origins
-        allowed_origins = [
-            "http://localhost:5500",
-            "http://127.0.0.1:5500",
-            "https://24a31a05kp.github.io",
-            "https://*.github.io"
-        ]
-        
-        # If the origin is allowed, echo it back
-        if origin and (origin in allowed_origins or origin.endswith('.github.io')):
-            response.headers.add('Access-Control-Allow-Origin', origin)
-            response.headers.add('Access-Control-Allow-Credentials', 'true')
-        
-        # Always add these headers for OPTIONS requests
-        if request.method == 'OPTIONS':
-            response.headers.add('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-            response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With')
-            response.headers.add('Access-Control-Max-Age', '86400')
-        
-        return response
     
     return app
 
