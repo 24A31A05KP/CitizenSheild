@@ -678,7 +678,18 @@ def register_routes(app):
         except Exception as e:
             app.logger.error(f"Get contact location error: {str(e)}")
             return jsonify({'error': str(e)}), 500
-
+    @app.route('/api/run-migration', methods=['GET'])
+    def run_migration_route():
+        """Temporary route to run database migration"""
+        try:
+            from scripts.migrate_db import run_migration
+            success = run_migration()
+            if success:
+                return jsonify({"message": "Migration completed successfully!"}), 200
+            else:
+                return jsonify({"error": "Migration failed"}), 500
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
 if __name__ == '__main__':
     app = create_app()
     port = int(os.getenv('PORT', 5000))
