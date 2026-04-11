@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - CitizenShield</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #ffffff;
+            color: #1e293b;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #dc2626, #f97316);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(220,38,38,0.3);
+        }
+
+        .logo-icon i { font-size: 1.4rem; color: white; }
+        .logo-text { font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, #dc2626, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .logo-tag { font-size: 0.7rem; color: #f97316; margin-left: 0.5rem; }
+        .nav-menu { display: flex; list-style: none; gap: 2rem; align-items: center; }
+        .nav-menu a { text-decoration: none; color: #334155; font-weight: 500; transition: color 0.3s; cursor: pointer; position: relative; }
+        .nav-menu a:hover, .nav-menu a.active { color: #dc2626; }
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #dc2626, #f97316);
+            transition: width 0.3s;
+        }
+        .nav-menu a:hover::after, .nav-menu a.active::after { width: 100%; }
+
+        /* Profile Container - White Background */
+        .profile-container {
+            min-height: 100vh;
+            background: #ffffff;
+            padding-top: 80px;
+        }
+        
+        .profile-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Profile Header - Colorful Gradient */
+        .profile-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 32px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .avatar {
+            width: 100px;
+            height: 100px;
+            background: rgba(255,255,255,0.25);
+            backdrop-filter: blur(10px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        .avatar i { font-size: 3rem; color: white; }
+        .profile-header h2 { color: white; margin-bottom: 0.25rem; }
+        .profile-header p { color: rgba(255,255,255,0.9); }
+        .role-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+        
+        /* Stats Cards - White with Shadow */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-color: #f97316;
+        }
+        .stat-card i { font-size: 2rem; background: linear-gradient(135deg, #dc2626, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem; display: inline-block; }
+        .stat-number { font-size: 2rem; font-weight: 800; color: #1e293b; }
+        .stat-label { color: #64748b; font-size: 0.85rem; }
+        
+        /* Profile Cards - White with Shadow */
+        .profile-card {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .card-header h3 { color: #1e293b; display: flex; align-items: center; gap: 0.5rem; }
+        .card-header h3 i { color: #f97316; }
+        .edit-btn {
+            background: linear-gradient(135deg, #dc2626, #f97316);
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            transition: all 0.3s;
+        }
+        .edit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220,38,38,0.3);
+        }
+        
+        .info-row {
+            display: flex;
+            padding: 1rem 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        .info-label { width: 120px; color: #64748b; font-weight: 500; }
+        .info-value { flex: 1; color: #1e293b; font-weight: 500; }
+        
+        /* Contact Cards - Colorful */
+        .contact-card {
+            background: linear-gradient(135deg, #f8fafc, #ffffff);
+            border-radius: 16px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+            border: 1px solid #e2e8f0;
+        }
+        .contact-card:hover { 
+            transform: translateX(5px);
+            border-color: #f97316;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .contact-card.primary { 
+            background: linear-gradient(135deg, #fef9f0, #fff5eb);
+            border-left: 4px solid #10b981;
+        }
+        .contact-info { display: flex; align-items: center; gap: 1rem; }
+        .contact-avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #dc2626, #f97316);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+        .contact-details h4 { color: #1e293b; margin-bottom: 0.25rem; }
+        .contact-details p { color: #64748b; font-size: 0.8rem; }
+        .contact-actions { display: flex; gap: 0.5rem; }
+        .contact-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        .star-btn { color: #facc15; }
+        .star-btn:hover { background: rgba(250,204,21,0.1); transform: scale(1.1); }
+        .delete-btn { color: #dc2626; }
+        .delete-btn:hover { background: rgba(220,38,38,0.1); transform: scale(1.1); }
+        
+        .empty-state { text-align: center; padding: 2rem; color: #94a3b8; }
+        .empty-state i { font-size: 2rem; margin-bottom: 0.5rem; color: #cbd5e1; }
+        
+        /* SOS History Items */
+        .sos-item {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+        .sos-item:hover {
+            transform: translateX(5px);
+            border-color: #f97316;
+        }
+        .sos-info { display: flex; align-items: center; gap: 1rem; }
+        .sos-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(220,38,38,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #dc2626;
+        }
+        .sos-details h4 { color: #1e293b; font-size: 0.9rem; }
+        .sos-details p { color: #64748b; font-size: 0.7rem; }
+        .sos-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .status-active { background: rgba(220,38,38,0.1); color: #dc2626; }
+        .status-resolved { background: rgba(16,185,129,0.1); color: #10b981; }
+        
+        /* Modal - White */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal.show { display: flex; }
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 24px;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+        }
+        .modal-content h3 { color: #1e293b; margin-bottom: 1.5rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; color: #64748b; margin-bottom: 0.5rem; font-weight: 500; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            color: #1e293b;
+            font-size: 1rem;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #f97316;
+            box-shadow: 0 0 0 3px rgba(249,115,22,0.1);
+        }
+        .modal-actions { display: flex; gap: 1rem; margin-top: 1.5rem; }
+        .btn-primary {
+            flex: 1;
+            padding: 0.8rem;
+            background: linear-gradient(135deg, #dc2626, #f97316);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220,38,38,0.3);
+        }
+        .btn-secondary {
+            flex: 1;
+            padding: 0.8rem;
+            background: #f1f5f9;
+            border: none;
+            border-radius: 12px;
+            color: #64748b;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: 50px;
+            z-index: 3000;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        .toast.error { background: #dc2626; }
+        .toast.warning { background: #f59e0b; }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: #dc2626;
+        }
+        
+        @media (max-width: 768px) {
+            .hamburger { display: block; }
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: white;
+                flex-direction: column;
+                padding: 1rem;
+                gap: 1rem;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            }
+            .nav-menu.active { display: flex; }
+            .profile-content { padding: 1rem; }
+            .info-row { flex-direction: column; gap: 0.5rem; }
+            .info-label { width: 100%; }
+            .contact-card { flex-direction: column; text-align: center; gap: 1rem; }
+            .contact-info { flex-direction: column; }
+            .stats-grid { gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo" onclick="window.location.href='../index.html'">
+                <div class="logo-icon"><i class="fas fa-shield-alt"></i></div>
+                <div><span class="logo-text">CitizenShield</span><span class="logo-tag">Protecting Every Citizen</span></div>
+            </div>
+            <button class="hamburger" id="hamburger">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="nav-menu" id="nav-menu"></ul>
+        </div>
+    </nav>
+
+    <div class="profile-container">
+        <div class="profile-content">
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="avatar"><i class="fas fa-user-circle"></i></div>
+                <h2 id="profile-name">Loading...</h2>
+                <p id="profile-email">Loading...</p>
+                <span class="role-badge" id="profile-role">Member</span>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card"><i class="fas fa-phone-alt"></i><div class="stat-number" id="contacts-count">0</div><div class="stat-label">Emergency Contacts</div></div>
+                <div class="stat-card"><i class="fas fa-exclamation-triangle"></i><div class="stat-number" id="sos-count">0</div><div class="stat-label">SOS Alerts</div></div>
+                <div class="stat-card"><i class="fas fa-calendar"></i><div class="stat-number" id="member-since">-</div><div class="stat-label">Member Since</div></div>
+            </div>
+
+            <!-- Profile Information -->
+            <div class="profile-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-user-circle"></i> Profile Information</h3>
+                    <button class="edit-btn" id="edit-profile-btn"><i class="fas fa-edit"></i> Edit</button>
+                </div>
+                <div class="info-row"><span class="info-label">Full Name</span><span class="info-value" id="display-name">-</span></div>
+                <div class="info-row"><span class="info-label">Email</span><span class="info-value" id="display-email">-</span></div>
+                <div class="info-row"><span class="info-label">Phone</span><span class="info-value" id="display-phone">-</span></div>
+            </div>
+
+            <!-- Emergency Contacts -->
+            <div class="profile-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-users"></i> Emergency Contacts</h3>
+                    <button class="edit-btn" id="add-contact-btn"><i class="fas fa-plus"></i> Add Contact</button>
+                </div>
+                <div id="contacts-container"><div class="empty-state"><i class="fas fa-address-book"></i><p>No emergency contacts added yet</p></div></div>
+            </div>
+
+            <!-- SOS History -->
+            <div class="profile-card">
+                <div class="card-header"><h3><i class="fas fa-history"></i> SOS History</h3></div>
+                <div id="sos-container"><div class="empty-state"><i class="fas fa-bell-slash"></i><p>No SOS alerts triggered yet</p></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="edit-profile-modal" class="modal">
+        <div class="modal-content">
+            <h3>Edit Profile</h3>
+            <div class="form-group"><label>Full Name</label><input type="text" id="edit-name" placeholder="Enter your name"></div>
+            <div class="form-group"><label>Phone Number</label><input type="tel" id="edit-phone" placeholder="Enter phone number"></div>
+            <div class="modal-actions"><button id="save-profile-btn" class="btn-primary">Save Changes</button><button id="cancel-profile-btn" class="btn-secondary">Cancel</button></div>
+        </div>
+    </div>
+
+    <!-- Add Contact Modal -->
+    <div id="add-contact-modal" class="modal">
+        <div class="modal-content">
+            <h3>Add Emergency Contact</h3>
+            <div class="form-group"><label>Full Name *</label><input type="text" id="contact-name" placeholder="Enter contact name"></div>
+            <div class="form-group"><label>Phone Number *</label><input type="tel" id="contact-phone" placeholder="Enter phone number"></div>
+            <div class="form-group"><label>Email (Optional)</label><input type="email" id="contact-email" placeholder="Enter email"></div>
+            <div class="form-group"><label>Relationship</label><select id="contact-relationship"><option value="">Select</option><option>Family</option><option>Friend</option><option>Spouse</option><option>Parent</option><option>Sibling</option></select></div>
+            <div class="modal-actions"><button id="save-contact-btn" class="btn-primary">Save Contact</button><button id="cancel-contact-btn" class="btn-secondary">Cancel</button></div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal">
+        <div class="modal-content">
+            <h3>Delete Contact</h3>
+            <p>Are you sure you want to delete this emergency contact?</p>
+            <div class="modal-actions"><button id="confirm-delete-btn" class="btn-primary" style="background:#dc2626;">Delete</button><button id="cancel-delete-btn" class="btn-secondary">Cancel</button></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5000/api';
+        let currentUserId = null;
+        let contactToDelete = null;
+
+        function showToast(msg, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${msg}`;
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.style.animation = 'slideOut 0.3s ease'; setTimeout(() => toast.remove(), 300); }, 3000);
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+        }
+
+        // Update navigation
+        function updateNavigation() {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            const navMenu = document.getElementById('nav-menu');
+            
+            if (!navMenu) return;
+            
+            if (token && user) {
+                let menuHtml = `
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="sos.html">SOS</a></li>
+                    <li><a href="helplines.html">Helplines</a></li>
+                    <li><a href="crime-awareness/dashboard.html">Awareness</a></li>
+                    <li><a href="profile.html" class="active">Profile</a></li>
+                `;
+                if (user.role === 'admin') {
+                    menuHtml += `<li><a href="admin.html">Admin</a></li>`;
+                }
+                menuHtml += `<li><a href="#" id="logout-link">Logout</a></li>`;
+                navMenu.innerHTML = menuHtml;
+                
+                const logoutLink = document.getElementById('logout-link');
+                if (logoutLink) {
+                    logoutLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('user');
+                        showToast('Logged out successfully', 'success');
+                        setTimeout(() => window.location.href = '../index.html', 1000);
+                    });
+                }
+            } else {
+                navMenu.innerHTML = `
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="sos.html">SOS</a></li>
+                    <li><a href="helplines.html">Helplines</a></li>
+                    <li><a href="crime-awareness/dashboard.html">Awareness</a></li>
+                    <li><a href="profile.html" class="active">Profile</a></li>
+                    <li><a href="login.html">Login</a></li>
+                    <li><a href="register.html">Register</a></li>
+                `;
+            }
+        }
+
+        async function loadProfile() {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) { window.location.href = 'login.html'; return; }
+                const response = await fetch(`${API_BASE_URL}/profile`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const user = await response.json();
+                currentUserId = user.id;
+                document.getElementById('profile-name').textContent = user.name;
+                document.getElementById('profile-email').textContent = user.email;
+                document.getElementById('display-name').textContent = user.name;
+                document.getElementById('display-email').textContent = user.email;
+                document.getElementById('display-phone').textContent = user.phone || 'Not provided';
+                document.getElementById('profile-role').textContent = user.role === 'admin' ? 'Administrator' : 'Member';
+                document.getElementById('contacts-count').textContent = user.emergency_contacts?.length || 0;
+                document.getElementById('sos-count').textContent = user.sos_count || 0;
+                if (user.created_at) document.getElementById('member-since').textContent = formatDate(user.created_at);
+                displayContacts(user.emergency_contacts || []);
+                loadSOSHistory();
+            } catch (error) { showToast('Error loading profile', 'error'); }
+        }
+
+        function displayContacts(contacts) {
+            const container = document.getElementById('contacts-container');
+            if (!contacts || contacts.length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-address-book"></i><p>No emergency contacts added yet</p></div>';
+                return;
+            }
+            container.innerHTML = contacts.map(contact => `
+                <div class="contact-card ${contact.is_primary ? 'primary' : ''}">
+                    <div class="contact-info">
+                        <div class="contact-avatar">${contact.name.charAt(0).toUpperCase()}</div>
+                        <div class="contact-details">
+                            <h4>${contact.name} ${contact.is_primary ? '<span style="color:#10b981; font-size:0.7rem;">(Primary)</span>' : ''}</h4>
+                            <p><i class="fas fa-phone"></i> ${contact.phone}</p>
+                            ${contact.email ? `<p><i class="fas fa-envelope"></i> ${contact.email}</p>` : ''}
+                            ${contact.relationship ? `<p><i class="fas fa-heart"></i> ${contact.relationship}</p>` : ''}
+                        </div>
+                    </div>
+                    <div class="contact-actions">
+                        ${!contact.is_primary ? `<button class="star-btn" onclick="setPrimaryContact(${contact.id})"><i class="fas fa-star"></i></button>` : ''}
+                        <button class="delete-btn" onclick="confirmDelete(${contact.id})"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function loadSOSHistory() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_BASE_URL}/sos/history`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const alerts = await response.json();
+                const container = document.getElementById('sos-container');
+                if (!alerts || alerts.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><i class="fas fa-bell-slash"></i><p>No SOS alerts triggered yet</p></div>';
+                    return;
+                }
+                container.innerHTML = alerts.slice(0, 5).map(alert => `
+                    <div class="sos-item">
+                        <div class="sos-info">
+                            <div class="sos-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                            <div class="sos-details">
+                                <h4>SOS Alert</h4>
+                                <p><i class="fas fa-calendar"></i> ${new Date(alert.created_at).toLocaleString()}</p>
+                                ${alert.address ? `<p><i class="fas fa-map-marker-alt"></i> ${alert.address.substring(0, 40)}</p>` : ''}
+                            </div>
+                        </div>
+                        <span class="sos-status ${alert.status === 'active' ? 'status-active' : 'status-resolved'}">${alert.status === 'active' ? 'Active' : 'Resolved'}</span>
+                    </div>
+                `).join('');
+            } catch (error) { console.error('Error loading SOS history:', error); }
+        }
+
+        async function addContact(contactData) {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_BASE_URL}/profile/contacts`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify(contactData)
+                });
+                if (response.ok) { showToast('Contact added successfully', 'success'); loadProfile(); }
+                else showToast('Failed to add contact', 'error');
+            } catch (error) { showToast('Error adding contact', 'error'); }
+        }
+
+        window.setPrimaryContact = async (contactId) => {
+            try {
+                const token = localStorage.getItem('token');
+                await fetch(`${API_BASE_URL}/profile/contacts/${contactId}/primary`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}` } });
+                showToast('Primary contact updated', 'success');
+                loadProfile();
+            } catch (error) { showToast('Failed to update primary contact', 'error'); }
+        };
+
+        window.confirmDelete = (contactId) => { contactToDelete = contactId; document.getElementById('delete-modal').classList.add('show'); };
+
+        async function updateProfile(data) {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_BASE_URL}/profile/update`, {
+                    method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify(data)
+                });
+                if (response.ok) { showToast('Profile updated', 'success'); loadProfile(); }
+                else showToast('Failed to update profile', 'error');
+            } catch (error) { showToast('Error updating profile', 'error'); }
+        }
+
+        // Hamburger Menu
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('nav-menu');
+        
+        if (hamburger) {
+            hamburger.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+                hamburger.innerHTML = navMenu.classList.contains('active') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+            });
+        }
+
+        document.getElementById('edit-profile-btn').addEventListener('click', () => {
+            document.getElementById('edit-name').value = document.getElementById('display-name').textContent;
+            document.getElementById('edit-phone').value = document.getElementById('display-phone').textContent;
+            document.getElementById('edit-profile-modal').classList.add('show');
+        });
+        document.getElementById('save-profile-btn').addEventListener('click', async () => {
+            const name = document.getElementById('edit-name').value.trim();
+            const phone = document.getElementById('edit-phone').value.trim();
+            if (!name) { showToast('Name is required', 'error'); return; }
+            await updateProfile({ name, phone });
+            document.getElementById('edit-profile-modal').classList.remove('show');
+        });
+        document.getElementById('cancel-profile-btn').addEventListener('click', () => document.getElementById('edit-profile-modal').classList.remove('show'));
+
+        document.getElementById('add-contact-btn').addEventListener('click', () => document.getElementById('add-contact-modal').classList.add('show'));
+        document.getElementById('save-contact-btn').addEventListener('click', async () => {
+            const name = document.getElementById('contact-name').value.trim();
+            const phone = document.getElementById('contact-phone').value.trim();
+            if (!name || !phone) { showToast('Name and phone are required', 'error'); return; }
+            await addContact({ name, phone, email: document.getElementById('contact-email').value.trim(), relationship: document.getElementById('contact-relationship').value });
+            document.getElementById('add-contact-modal').classList.remove('show');
+            document.getElementById('contact-name').value = '';
+            document.getElementById('contact-phone').value = '';
+            document.getElementById('contact-email').value = '';
+            document.getElementById('contact-relationship').value = '';
+        });
+        document.getElementById('cancel-contact-btn').addEventListener('click', () => document.getElementById('add-contact-modal').classList.remove('show'));
+
+        document.getElementById('confirm-delete-btn').addEventListener('click', async () => {
+            if (contactToDelete) {
+                try {
+                    const token = localStorage.getItem('token');
+                    await fetch(`${API_BASE_URL}/profile/contacts/${contactToDelete}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+                    showToast('Contact deleted', 'success');
+                    loadProfile();
+                } catch (error) { showToast('Failed to delete contact', 'error'); }
+                contactToDelete = null;
+            }
+            document.getElementById('delete-modal').classList.remove('show');
+        });
+        document.getElementById('cancel-delete-btn').addEventListener('click', () => {
+            contactToDelete = null;
+            document.getElementById('delete-modal').classList.remove('show');
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateNavigation();
+            loadProfile();
+        });
+    </script>
+</body>
+</html>

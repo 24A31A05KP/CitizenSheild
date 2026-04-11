@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Crime - CitizenShield</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #ffffff;
+            color: #1e293b;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #dc2626, #f97316);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(220,38,38,0.3);
+        }
+
+        .logo-icon i { font-size: 1.4rem; color: white; }
+        .logo-text { font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, #dc2626, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .logo-tag { font-size: 0.7rem; color: #f97316; margin-left: 0.5rem; }
+        .nav-menu { display: flex; list-style: none; gap: 2rem; align-items: center; }
+        .nav-menu a { text-decoration: none; color: #334155; font-weight: 500; transition: color 0.3s; cursor: pointer; position: relative; }
+        .nav-menu a:hover, .nav-menu a.active { color: #dc2626; }
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #dc2626, #f97316);
+            transition: width 0.3s;
+        }
+        .nav-menu a:hover::after, .nav-menu a.active::after { width: 100%; }
+
+        /* Report Container - White Background */
+        .report-container {
+            min-height: 100vh;
+            background: #ffffff;
+            padding-top: 80px;
+        }
+
+        /* Main Content */
+        .report-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .report-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .report-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e293b, #dc2626);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .report-header h1 i {
+            background: none;
+            -webkit-text-fill-color: #dc2626;
+        }
+
+        .report-header p {
+            color: #64748b;
+            margin-top: 0.5rem;
+        }
+
+        /* Info Box - Light Orange Background */
+        .info-box {
+            background: linear-gradient(135deg, rgba(249,115,22,0.08), rgba(220,38,38,0.05));
+            border-left: 4px solid #f97316;
+            border-radius: 16px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .info-box i {
+            font-size: 1.5rem;
+            color: #f97316;
+        }
+
+        .info-box p {
+            color: #475569;
+            font-size: 0.9rem;
+        }
+
+        .info-box p strong {
+            color: #dc2626;
+        }
+
+        /* Form - White Card with Shadow */
+        .report-form {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: #334155;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group label i {
+            color: #f97316;
+            margin-right: 0.5rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            color: #1e293b;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #f97316;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(249,115,22,0.1);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #94a3b8;
+        }
+
+        /* Anonymous Toggle - Light Gray Background */
+        .anonymous-toggle {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .anonymous-toggle div {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .anonymous-toggle i {
+            font-size: 1.2rem;
+            color: #f97316;
+        }
+
+        .anonymous-toggle span {
+            color: #1e293b;
+            font-weight: 500;
+        }
+
+        .anonymous-toggle small {
+            display: block;
+            color: #64748b;
+            font-size: 0.7rem;
+            margin-top: 0.2rem;
+        }
+
+        /* Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: 0.3s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background: linear-gradient(135deg, #dc2626, #f97316);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* User Details */
+        #user-details {
+            transition: all 0.3s;
+        }
+
+        /* Submit Button - Colorful Gradient */
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #dc2626, #f97316);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+            box-shadow: 0 4px 15px rgba(220,38,38,0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(220,38,38,0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Success Message */
+        .success-message {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(16,185,129,0.1);
+            border: 1px solid #10b981;
+            border-radius: 12px;
+            color: #10b981;
+            text-align: center;
+            display: none;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: 50px;
+            z-index: 3000;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        .toast.error { background: #dc2626; }
+        .toast.warning { background: #f59e0b; }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: #dc2626;
+        }
+
+        @media (max-width: 768px) {
+            .hamburger { display: block; }
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: white;
+                flex-direction: column;
+                padding: 1rem;
+                gap: 1rem;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            }
+            .nav-menu.active { display: flex; }
+            .report-content { padding: 1rem; }
+            .report-form { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo" onclick="window.location.href='../../index.html'">
+                <div class="logo-icon"><i class="fas fa-shield-alt"></i></div>
+                <div><span class="logo-text">CitizenShield</span><span class="logo-tag">Protecting Every Citizen</span></div>
+            </div>
+            <button class="hamburger" id="hamburger">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="nav-menu" id="nav-menu"></ul>
+        </div>
+    </nav>
+
+    <div class="report-container">
+        <div class="report-content">
+            <div class="report-header">
+                <h1><i class="fas fa-flag"></i> Report a Crime</h1>
+                <p>Your report helps create safer communities. You can report anonymously.</p>
+            </div>
+
+            <div class="info-box">
+                <i class="fas fa-shield-alt"></i>
+                <p><strong>Confidential & Secure</strong><br>Your identity is protected. Reports are used for safety analysis and awareness only.</p>
+            </div>
+
+            <div class="report-form">
+                <form id="crime-report-form">
+                    <!-- Anonymous Toggle -->
+                    <div class="anonymous-toggle">
+                        <div>
+                            <i class="fas fa-user-secret"></i>
+                            <div>
+                                <span>Report Anonymously</span>
+                                <small>Your name and email will not be shared</small>
+                            </div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="anonymous-toggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <!-- User Details (shown only if anonymous is OFF) -->
+                    <div id="user-details" style="display: none;">
+                        <div class="form-group">
+                            <label><i class="fas fa-user"></i> Your Name (Optional)</label>
+                            <input type="text" id="reporter-name" placeholder="Enter your name">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-envelope"></i> Email (Optional)</label>
+                            <input type="email" id="reporter-email" placeholder="For follow-up updates">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-gavel"></i> Type of Crime *</label>
+                        <select id="crime-type" required>
+                            <option value="">Select crime type</option>
+                            <option value="cyber">Cyber Crime (Fraud, Phishing, Hacking)</option>
+                            <option value="theft">Theft / Burglary</option>
+                            <option value="women">Crime Against Women (Harassment, Domestic Violence)</option>
+                            <option value="assault">Assault / Violence</option>
+                            <option value="fraud">Financial Fraud</option>
+                            <option value="child">Child Abuse / Exploitation</option>
+                            <option value="other">Other Crime</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-map-marker-alt"></i> Location of Incident *</label>
+                        <input type="text" id="location" placeholder="Area, City, Landmark" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar"></i> Date & Time (Approximate)</label>
+                        <input type="datetime-local" id="incident-time">
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-align-left"></i> Description *</label>
+                        <textarea id="description" rows="5" placeholder="Describe what happened. Be as specific as you're comfortable with..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-chart-line"></i> Severity (How urgent is this?)</label>
+                        <select id="severity">
+                            <option value="low">Low - Informational only</option>
+                            <option value="medium">Medium - Needs attention</option>
+                            <option value="high">High - Immediate concern</option>
+                            <option value="critical">Critical - Emergency situation</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="submit-btn">
+                        <i class="fas fa-paper-plane"></i> Submit Report (Anonymous)
+                    </button>
+
+                    <div id="success-message" class="success-message">
+                        <i class="fas fa-check-circle"></i> Thank you! Your report has been submitted. It will help make our community safer.
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5000/api';
+
+        // Update navigation - NO PENALTIES LINK
+        function updateNavigation() {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            const navMenu = document.getElementById('nav-menu');
+            
+            if (!navMenu) return;
+            
+            if (token && user) {
+                let menuHtml = `
+                    <li><a href="../../index.html">Home</a></li>
+                    <li><a href="../sos.html">SOS</a></li>
+                    <li><a href="../helplines.html">Helplines</a></li>
+                    <li><a href="dashboard.html">Awareness</a></li>
+                    <li><a href="report-crime.html" class="active">Report Crime</a></li>
+                    <li><a href="../profile.html">Profile</a></li>
+                `;
+                if (user.role === 'admin') {
+                    menuHtml += `<li><a href="../admin.html">Admin</a></li>`;
+                }
+                menuHtml += `<li><a href="#" id="logout-link">Logout</a></li>`;
+                navMenu.innerHTML = menuHtml;
+                
+                const logoutLink = document.getElementById('logout-link');
+                if (logoutLink) {
+                    logoutLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('user');
+                        showToast('Logged out successfully', 'success');
+                        setTimeout(() => window.location.href = '../../index.html', 1000);
+                    });
+                }
+            } else {
+                navMenu.innerHTML = `
+                    <li><a href="../../index.html">Home</a></li>
+                    <li><a href="../sos.html">SOS</a></li>
+                    <li><a href="../helplines.html">Helplines</a></li>
+                    <li><a href="dashboard.html">Awareness</a></li>
+                    <li><a href="report-crime.html" class="active">Report Crime</a></li>
+                    <li><a href="../login.html">Login</a></li>
+                    <li><a href="../register.html">Register</a></li>
+                `;
+            }
+        }
+
+        // Show toast
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Toggle anonymous mode
+        const anonymousToggle = document.getElementById('anonymous-toggle');
+        const userDetails = document.getElementById('user-details');
+        const submitBtn = document.getElementById('submit-btn');
+
+        if (anonymousToggle) {
+            anonymousToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    userDetails.style.display = 'none';
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Report (Anonymous)';
+                } else {
+                    userDetails.style.display = 'block';
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Report';
+                }
+            });
+        }
+
+        // Form submission
+        const reportForm = document.getElementById('crime-report-form');
+        if (reportForm) {
+            reportForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const formData = {
+                    crime_type: document.getElementById('crime-type').value,
+                    location: document.getElementById('location').value,
+                    description: document.getElementById('description').value,
+                    severity: document.getElementById('severity').value,
+                    incident_time: document.getElementById('incident-time').value,
+                    is_anonymous: anonymousToggle.checked
+                };
+
+                if (!anonymousToggle.checked) {
+                    formData.name = document.getElementById('reporter-name').value;
+                    formData.email = document.getElementById('reporter-email').value;
+                }
+
+                // Validate required fields
+                if (!formData.crime_type || !formData.location || !formData.description) {
+                    showToast('Please fill in all required fields', 'error');
+                    return;
+                }
+
+                // Show loading state
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+
+                try {
+                    // Simulate API call
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    
+                    // Show success message
+                    const successDiv = document.getElementById('success-message');
+                    successDiv.style.display = 'block';
+                    
+                    // Clear form
+                    reportForm.reset();
+                    anonymousToggle.checked = true;
+                    userDetails.style.display = 'none';
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Report (Anonymous)';
+                    
+                    // Show toast notification
+                    showToast('✅ Report submitted successfully! Thank you for helping make our community safer.', 'success');
+                    
+                    // Scroll to success message
+                    successDiv.scrollIntoView({ behavior: 'smooth' });
+                    
+                    // Hide success message after 5 seconds
+                    setTimeout(() => {
+                        successDiv.style.display = 'none';
+                    }, 5000);
+                    
+                } catch (error) {
+                    showToast('Error submitting report. Please try again.', 'error');
+                } finally {
+                    submitBtn.disabled = false;
+                }
+            });
+        }
+
+        // Check authentication
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                // Don't redirect, allow anonymous reporting
+                console.log('User not logged in - anonymous reporting allowed');
+            }
+        }
+
+        // Hamburger Menu
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('nav-menu');
+        
+        if (hamburger) {
+            hamburger.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+                hamburger.innerHTML = navMenu.classList.contains('active') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            updateNavigation();
+        });
+    </script>
+</body>
+</html>

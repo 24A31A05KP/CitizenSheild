@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crime Awareness Hub - CitizenShield</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Chart.js for statistics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #ffffff;
+        }
+
+        .awareness-container {
+            min-height: 100vh;
+            background: #ffffff;
+            padding-top: 80px;
+            position: relative;
+        }
+
+        /* Navigation - Light Theme */
+        .navbar {
+            background: #ffffff;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #dc2626, #f97316);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon i {
+            font-size: 1.4rem;
+            color: white;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #dc2626, #f97316);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-tag {
+            font-size: 0.7rem;
+            color: #f97316;
+            margin-left: 0.5rem;
+            font-weight: normal;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #4b5563;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            color: #dc2626;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #dc2626, #f97316);
+            transition: width 0.3s;
+        }
+
+        .nav-menu a:hover::after,
+        .nav-menu a.active::after {
+            width: 100%;
+        }
+
+        .btn-register {
+            background: linear-gradient(135deg, #dc2626, #f97316);
+            color: white !important;
+            padding: 0.5rem 1rem !important;
+            border-radius: 50px;
+        }
+
+        /* Main Content */
+        .awareness-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .awareness-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .awareness-header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #dc2626, #f97316);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .awareness-header p {
+            color: #6b7280;
+            font-size: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Stats Cards - Light Theme */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 1.2rem;
+            text-align: center;
+            transition: all 0.3s;
+            border: 1px solid #e2e8f0;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border-color: #f97316;
+        }
+
+        .stat-card i {
+            font-size: 1.8rem;
+            color: #f97316;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #1e293b;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        /* Charts Row */
+        .charts-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 1.2rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .chart-card h3 {
+            color: #1e293b;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chart-card h3 i {
+            color: #f97316;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 220px;
+        }
+
+        /* BIG COLORFUL ACTION CARDS */
+        .action-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.8rem;
+            margin: 2rem 0;
+        }
+
+        .big-action-card {
+            position: relative;
+            border-radius: 28px;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease backwards;
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .big-action-card:nth-child(1) { animation-delay: 0.1s; background: linear-gradient(135deg, #1e3a8a, #3b82f6); }
+        .big-action-card:nth-child(2) { animation-delay: 0.2s; background: linear-gradient(135deg, #b91c1c, #dc2626); }
+        .big-action-card:nth-child(3) { animation-delay: 0.3s; background: linear-gradient(135deg, #047857, #10b981); }
+        .big-action-card:nth-child(4) { animation-delay: 0.4s; background: linear-gradient(135deg, #b45309, #f59e0b); }
+        .big-action-card:nth-child(5) { animation-delay: 0.5s; background: linear-gradient(135deg, #6d28d9, #8b5cf6); }
+
+        .big-action-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .big-action-card:hover::before {
+            left: 100%;
+        }
+
+        .big-action-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 40px rgba(0,0,0,0.2);
+        }
+
+        .card-icon-wrapper {
+            width: 70px;
+            height: 70px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.2rem;
+            transition: all 0.3s;
+        }
+
+        .big-action-card:hover .card-icon-wrapper {
+            transform: scale(1.1) rotate(5deg);
+            background: rgba(255,255,255,0.3);
+        }
+
+        .card-icon-wrapper i {
+            font-size: 2rem;
+            color: white;
+        }
+
+        .big-action-card h3 {
+            color: white;
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .big-action-card p {
+            color: rgba(255,255,255,0.9);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .card-arrow {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .big-action-card:hover .card-arrow {
+            gap: 0.8rem;
+            color: white;
+        }
+
+        .card-arrow i {
+            transition: transform 0.3s;
+        }
+
+        .big-action-card:hover .card-arrow i {
+            transform: translateX(5px);
+        }
+
+        /* Crime Types Grid */
+        .section-title {
+            margin: 2rem 0 1.5rem;
+        }
+
+        .section-title h2 {
+            color: #1e293b;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title h2 i {
+            color: #f97316;
+        }
+
+        .crime-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .crime-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .crime-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            border-color: #f97316;
+        }
+
+        .crime-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #dc2626, #f97316);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .crime-icon i {
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .crime-card h3 {
+            color: #1e293b;
+            font-size: 1.2rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .crime-percentage {
+            display: inline-block;
+            background: #fef3e8;
+            color: #f97316;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin: 0.5rem 0;
+        }
+
+        .crime-card p {
+            color: #4b5563;
+            font-size: 0.85rem;
+            margin: 0.8rem 0;
+            line-height: 1.5;
+        }
+
+        .crime-prevention {
+            margin-top: 1rem;
+            padding-top: 0.8rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .crime-prevention small {
+            color: #10b981;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        /* Safety Tips Grid */
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .tip-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            border: 1px solid #e2e8f0;
+        }
+
+        .tip-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+
+        .tip-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .tip-header i {
+            font-size: 1.5rem;
+            color: #f97316;
+        }
+
+        .tip-header h3 {
+            color: #1e293b;
+            font-size: 1.1rem;
+        }
+
+        .tip-list {
+            list-style: none;
+        }
+
+        .tip-list li {
+            padding: 0.5rem 0;
+            color: #4b5563;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .tip-list li:last-child {
+            border-bottom: none;
+        }
+
+        .tip-list li i {
+            color: #10b981;
+            font-size: 0.7rem;
+        }
+
+        /* Campaigns Grid */
+        .campaigns-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .campaign-card {
+            background: linear-gradient(135deg, #fff5eb, #fff9f0);
+            border-radius: 20px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            border: 1px solid #ffe6d5;
+        }
+
+        .campaign-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+            border-color: #f97316;
+        }
+
+        .campaign-card h3 {
+            color: #1e293b;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .campaign-card p {
+            color: #4b5563;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        .campaign-date {
+            display: inline-block;
+            background: rgba(249,115,22,0.1);
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: #f97316;
+            margin-bottom: 1rem;
+        }
+
+        .progress-bar {
+            background: #e2e8f0;
+            border-radius: 10px;
+            height: 8px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #f97316, #facc15);
+            width: 0%;
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s;
+        }
+
+        .campaign-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #64748b;
+            margin-bottom: 1rem;
+        }
+
+        .campaign-btn {
+            width: 100%;
+            padding: 0.7rem;
+            background: #fef3e8;
+            border: 1px solid #ffe6d5;
+            border-radius: 12px;
+            color: #f97316;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .campaign-btn:hover {
+            background: #f97316;
+            color: white;
+            border-color: #f97316;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: 50px;
+            z-index: 3000;
+            animation: slideIn 0.3s ease;
+        }
+        .toast.error { background: #dc2626; }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        /* Chatbot Styles - White Theme */
+        .chatbot-float-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 65px;
+            height: 65px;
+            background: linear-gradient(135deg, #dc2626, #f97316);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(220,38,38,0.4);
+            transition: all 0.3s;
+            z-index: 1000;
+            animation: pulse-chat 2s infinite;
+        }
+
+        .chatbot-float-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(249,115,22,0.5);
+        }
+
+        .chatbot-float-btn i {
+            font-size: 2rem;
+            color: white;
+        }
+
+        @keyframes pulse-chat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .chat-window {
+            position: fixed;
+            bottom: 110px;
+            right: 30px;
+            width: 380px;
+            height: 550px;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 1001;
+            border: 1px solid #e2e8f0;
+            animation: slideUpChat 0.3s ease;
+        }
+
+        .chat-window.open {
+            display: flex;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #dc2626, #f97316);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h3 {
+            color: white;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0;
+        }
+
+        .close-chat {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            background: #ffffff;
+        }
+
+        .message {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.bot .message-bubble {
+            background: #fef3e8;
+            border-left: 3px solid #f97316;
+        }
+
+        .message.user .message-bubble {
+            background: #eef2ff;
+            border-right: 3px solid #3b82f6;
+        }
+
+        .message-bubble {
+            max-width: 80%;
+            padding: 0.8rem 1rem;
+            border-radius: 16px;
+            color: #1e293b;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .chat-input-container {
+            padding: 1rem;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 0.8rem;
+            background: white;
+        }
+
+        .chat-input-container input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 30px;
+            color: #1e293b;
+            font-size: 0.85rem;
+        }
+
+        .chat-input-container input:focus {
+            outline: none;
+            border-color: #f97316;
+        }
+
+        .chat-input-container button {
+            padding: 0.8rem 1.2rem;
+            background: linear-gradient(135deg, #dc2626, #f97316);
+            border: none;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .voice-chat-btn {
+            background: none;
+            border: none;
+            color: #f97316;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .quick-actions {
+            padding: 0.5rem 1rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            border-top: 1px solid #e2e8f0;
+            background: white;
+        }
+
+        .quick-action {
+            background: #f8fafc;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            color: #4b5563;
+            font-size: 0.7rem;
+            cursor: pointer;
+        }
+
+        .quick-action:hover {
+            background: #f97316;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            .awareness-content {
+                padding: 1rem;
+            }
+            .charts-row {
+                grid-template-columns: 1fr;
+            }
+            .action-cards-grid {
+                grid-template-columns: 1fr;
+            }
+            .big-action-card h3 {
+                font-size: 1.3rem;
+            }
+            .chat-window {
+                width: 320px;
+                height: 500px;
+                right: 10px;
+                bottom: 90px;
+            }
+            .chatbot-float-btn {
+                width: 55px;
+                height: 55px;
+                right: 15px;
+                bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-shield-alt"></i></div>
+                <div><span class="logo-text">CitizenShield</span><span class="logo-tag">Crime Awareness</span></div>
+            </div>
+            <ul class="nav-menu" id="nav-menu"></ul>
+        </div>
+    </nav>
+
+    <div class="awareness-container">
+        <div class="awareness-content">
+            <div class="awareness-header">
+                <h1><i class="fas fa-shield-alt"></i> Crime Awareness Hub</h1>
+                <p>Knowledge is your first shield against crime. Stay informed, stay protected.</p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card"><i class="fas fa-chart-line"></i><div class="stat-number">35%</div><div class="stat-label">Cyber Crime Cases</div></div>
+                <div class="stat-card"><i class="fas fa-chart-line"></i><div class="stat-number">28%</div><div class="stat-label">Theft Cases</div></div>
+                <div class="stat-card"><i class="fas fa-fist-raised"></i><div class="stat-number">18%</div><div class="stat-label">Crimes Against Women</div></div>
+                <div class="stat-card"><i class="fas fa-phone-alt"></i><div class="stat-number">9+</div><div class="stat-label">National Helplines</div></div>
+            </div>
+
+            <!-- BIG COLORFUL ACTION CARDS -->
+            <div class="action-cards-grid">
+                <div class="big-action-card" onclick="window.location.href='penalties.html'">
+                    <div>
+                        <div class="card-icon-wrapper"><i class="fas fa-gavel"></i></div>
+                        <h3>Crime Penalties</h3>
+                        <p>Know the punishment under IPC for different crimes. Understand legal consequences and your rights.</p>
+                    </div>
+                    <div class="card-arrow"><span>Explore Penalties</span><i class="fas fa-arrow-right"></i></div>
+                </div>
+
+                <div class="big-action-card" onclick="window.location.href='report-crime.html'">
+                    <div>
+                        <div class="card-icon-wrapper"><i class="fas fa-flag"></i></div>
+                        <h3>Report Crime</h3>
+                        <p>Anonymous crime reporting. Your identity is protected. Help make our community safer.</p>
+                    </div>
+                    <div class="card-arrow"><span>Report Now</span><i class="fas fa-arrow-right"></i></div>
+                </div>
+
+                <div class="big-action-card" onclick="window.location.href='crime-map.html'">
+                    <div>
+                        <div class="card-icon-wrapper"><i class="fas fa-map-marked-alt"></i></div>
+                        <h3>View Crime Map</h3>
+                        <p>Interactive map showing crime hotspots and safe zones across India. Stay aware, stay safe.</p>
+                    </div>
+                    <div class="card-arrow"><span>Explore Map</span><i class="fas fa-arrow-right"></i></div>
+                </div>
+
+                <div class="big-action-card" onclick="window.location.href='resources.html'">
+                    <div>
+                        <div class="card-icon-wrapper"><i class="fas fa-download"></i></div>
+                        <h3>Download Resources</h3>
+                        <p>Safety guides, self-defense manuals, legal handbooks, and awareness posters.</p>
+                    </div>
+                    <div class="card-arrow"><span>Get Resources</span><i class="fas fa-arrow-right"></i></div>
+                </div>
+
+                <div class="big-action-card" onclick="window.location.href='../helplines.html'">
+                    <div>
+                        <div class="card-icon-wrapper"><i class="fas fa-phone-alt"></i></div>
+                        <h3>Emergency Helplines</h3>
+                        <p>24/7 emergency contact numbers. Police, Women Helpline, Ambulance, Cyber Crime.</p>
+                    </div>
+                    <div class="card-arrow"><span>View Helplines</span><i class="fas fa-arrow-right"></i></div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="charts-row">
+                <div class="chart-card">
+                    <h3><i class="fas fa-chart-pie"></i> Crime Distribution (India 2023)</h3>
+                    <div class="chart-container"><canvas id="crimePieChart"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <h3><i class="fas fa-chart-line"></i> Crime Trend (2020-2023)</h3>
+                    <div class="chart-container"><canvas id="crimeTrendChart"></canvas></div>
+                </div>
+            </div>
+
+            <!-- Crime Types Section -->
+            <div class="section-title"><h2><i class="fas fa-gavel"></i> Types of Crimes & Prevention</h2></div>
+            <div class="crime-grid" id="crime-grid"></div>
+
+            <!-- Safety Tips Section -->
+            <div class="section-title"><h2><i class="fas fa-lightbulb"></i> Safety Tips & Prevention</h2></div>
+            <div class="tips-grid" id="tips-grid"></div>
+
+            <!-- Campaigns Section -->
+            <div class="section-title"><h2><i class="fas fa-bullhorn"></i> Active Awareness Campaigns</h2></div>
+            <div class="campaigns-grid" id="campaigns-grid"></div>
+        </div>
+    </div>
+
+    <!-- Floating Chatbot -->
+    <div class="chatbot-float-btn" id="chatbot-btn">
+        <i class="fas fa-robot"></i>
+    </div>
+
+    <div class="chat-window" id="chat-window">
+        <div class="chat-header">
+            <h3><i class="fas fa-robot"></i> Safety Assistant</h3>
+            <button class="close-chat" id="close-chat">✕</button>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <div class="message bot">
+                <div class="message-bubble">
+                    👋 Hi! I'm your safety assistant. I can help you with:
+                    <br>• Emergency helplines
+                    <br>• Crime punishments
+                    <br>• Safety tips
+                    <br>• Legal procedures
+                    <br><br>How can I help you today?
+                </div>
+            </div>
+        </div>
+        <div class="quick-actions">
+            <button class="quick-action" onclick="sendQuickAction('Police number')">🚔 Police</button>
+            <button class="quick-action" onclick="sendQuickAction('Women helpline')">👩 Women</button>
+            <button class="quick-action" onclick="sendQuickAction('Ambulance')">🚑 Ambulance</button>
+            <button class="quick-action" onclick="sendQuickAction('Cyber crime')">💻 Cyber Crime</button>
+            <button class="quick-action" onclick="sendQuickAction('Theft punishment')">⚖️ Theft</button>
+            <button class="quick-action" onclick="sendQuickAction('Safety tips')">🛡️ Tips</button>
+        </div>
+        <div class="chat-input-container">
+            <button class="voice-chat-btn" id="voice-chat-btn"><i class="fas fa-microphone"></i></button>
+            <input type="text" id="chat-input" placeholder="Type your question...">
+            <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // Chatbot Responses
+        const chatbotResponses = {
+            police: "📞 Police Helpline: 100. Available 24/7 for immediate assistance.",
+            women: "👩 Women Helpline: 1091. 24x7 assistance for women in distress.",
+            ambulance: "🚑 Ambulance: 102. For medical emergencies, call immediately.",
+            cyber: "💻 Cyber Crime Helpline: 1930. Report online fraud and cyber crimes.",
+            child: "👶 Child Helpline: 1098. For child protection and assistance.",
+            theft: "⚖️ Theft under IPC 379: 1 to 3 years imprisonment + fine.",
+            rape: "⚖️ Rape under IPC 376: 10 years to life imprisonment + fine.",
+            domestic: "⚖️ Domestic violence under IPC 498A: 1 to 3 years imprisonment.",
+            cyberPunishment: "⚖️ Cyber fraud: 3 to 7 years imprisonment + up to ₹10 lakh fine.",
+            fir: "📋 To file FIR: 1) Visit nearest police station, 2) Write complaint, 3) Get free copy. Women can file Zero FIR anywhere.",
+            safety: "🛡️ Safety Tips:\n• Share location with trusted contacts\n• Never share OTP\n• Enable 2FA\n• Trust your instincts\n• Save emergency numbers"
+        };
+
+        function getBotResponse(userMessage) {
+            const lowerMsg = userMessage.toLowerCase();
+            if (lowerMsg.includes('police') || lowerMsg.includes('100')) return chatbotResponses.police;
+            if (lowerMsg.includes('women') || lowerMsg.includes('1091')) return chatbotResponses.women;
+            if (lowerMsg.includes('ambulance') || lowerMsg.includes('102')) return chatbotResponses.ambulance;
+            if (lowerMsg.includes('cyber') || lowerMsg.includes('1930')) return chatbotResponses.cyber;
+            if (lowerMsg.includes('child') || lowerMsg.includes('1098')) return chatbotResponses.child;
+            if (lowerMsg.includes('theft')) return chatbotResponses.theft;
+            if (lowerMsg.includes('rape')) return chatbotResponses.rape;
+            if (lowerMsg.includes('domestic')) return chatbotResponses.domestic;
+            if (lowerMsg.includes('fraud') || lowerMsg.includes('phishing')) return chatbotResponses.cyberPunishment;
+            if (lowerMsg.includes('fir') || lowerMsg.includes('file')) return chatbotResponses.fir;
+            if (lowerMsg.includes('tip') || lowerMsg.includes('safety')) return chatbotResponses.safety;
+            return "I'm here to help! Ask me about emergency numbers (Police: 100, Women: 1091, Ambulance: 102), crime punishments, or safety tips.";
+        }
+
+        // Chatbot DOM Elements
+        const chatbotBtn = document.getElementById('chatbot-btn');
+        const chatWindow = document.getElementById('chat-window');
+        const closeChat = document.getElementById('close-chat');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const sendBtn = document.getElementById('send-btn');
+        const voiceChatBtn = document.getElementById('voice-chat-btn');
+
+        if (chatbotBtn) {
+            chatbotBtn.addEventListener('click', () => chatWindow.classList.add('open'));
+        }
+        if (closeChat) {
+            closeChat.addEventListener('click', () => chatWindow.classList.remove('open'));
+        }
+
+        function addMessage(message, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            messageDiv.innerHTML = `<div class="message-bubble">${message.replace(/\n/g, '<br>')}</div>`;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function sendMessage() {
+            const userMessage = chatInput.value.trim();
+            if (!userMessage) return;
+            addMessage(userMessage, true);
+            chatInput.value = '';
+            setTimeout(() => addMessage(getBotResponse(userMessage), false), 500);
+        }
+
+        if (sendBtn) sendBtn.addEventListener('click', sendMessage);
+        if (chatInput) chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+
+        window.sendQuickAction = function(action) {
+            addMessage(action, true);
+            setTimeout(() => addMessage(getBotResponse(action), false), 500);
+        };
+
+        // Voice Recognition
+        let recognition = null;
+        if (voiceChatBtn && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.lang = 'en-IN';
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                addMessage(transcript, true);
+                setTimeout(() => addMessage(getBotResponse(transcript), false), 500);
+            };
+            voiceChatBtn.addEventListener('click', () => recognition.start());
+        }
+
+        document.addEventListener('click', (e) => {
+            if (chatWindow && chatbotBtn && !chatWindow.contains(e.target) && !chatbotBtn.contains(e.target) && chatWindow.classList.contains('open')) {
+                chatWindow.classList.remove('open');
+            }
+        });
+
+        // Main Dashboard Functions
+        const crimeData = [
+            { name: "Cyber Crime", percentage: 35, description: "Online fraud, phishing, identity theft", prevention: "Use strong passwords, enable 2FA, don't share OTP", helpline: "1930", stats: "65,893 cases", icon: "fa-laptop-code" },
+            { name: "Theft & Burglary", percentage: 28, description: "Vehicle theft, house burglary, pickpocketing", prevention: "Lock doors, install CCTV, park in well-lit areas", helpline: "100", stats: "52,714 cases", icon: "fa-hand-holding-usd" },
+            { name: "Crime Against Women", percentage: 18, description: "Domestic violence, harassment, stalking", prevention: "Share location, learn self-defense", helpline: "1091", stats: "33,892 cases", icon: "fa-fist-raised" },
+            { name: "Assault & Violence", percentage: 12, description: "Physical attacks, road rage", prevention: "Avoid isolated areas, travel in groups", helpline: "100", stats: "22,607 cases", icon: "fa-fist-raised" },
+            { name: "Financial Fraud", percentage: 7, description: "Investment scams, UPI fraud", prevention: "Never share bank details", helpline: "1930", stats: "13,178 cases", icon: "fa-chart-line" }
+        ];
+
+        const safetyTips = [
+            { category: "📱 Digital Safety", icon: "fa-laptop", tips: ["Never share OTP", "Enable 2FA", "Don't click suspicious links", "Use strong passwords"] },
+            { category: "🚶 Personal Safety", icon: "fa-walking", tips: ["Share location", "Avoid walking alone at night", "Keep emergency numbers", "Learn self-defense"] },
+            { category: "🏠 Home Safety", icon: "fa-home", tips: ["Keep doors locked", "Install peephole", "Don't open to strangers", "Get to know neighbors"] },
+            { category: "💰 Financial Safety", icon: "fa-chart-line", tips: ["Never share bank details", "Check statements", "Verify caller identity", "Use secure payments"] }
+        ];
+
+        const campaigns = [
+            { title: "Cyber Suraksha", description: "Learn to identify and prevent online frauds", date: "April 1-15, 2026", target: 5000, participants: 3124 },
+            { title: "Safe City Initiative", description: "Community safety walks, CCTV awareness", date: "April 10-25, 2026", target: 10000, participants: 7842 },
+            { title: "Women Safety Workshop", description: "Self-defense training, legal rights awareness", date: "April 5-20, 2026", target: 3000, participants: 2156 }
+        ];
+
+        function updateNavigation() {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            const navMenu = document.getElementById('nav-menu');
+            if (!navMenu) return;
+            if (token && user) {
+                navMenu.innerHTML = `
+                    <li><a href="../../index.html">Home</a></li>
+                    <li><a href="../sos.html">SOS</a></li>
+                    <li><a href="../helplines.html">Helplines</a></li>
+                    <li><a href="dashboard.html" class="active">Awareness</a></li>
+                    <li><a href="../profile.html">Profile</a></li>
+                    <li><a href="#" id="logout-link">Logout</a></li>
+                `;
+                document.getElementById('logout-link')?.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    window.location.href = '../../index.html';
+                });
+            } else {
+                navMenu.innerHTML = `
+                    <li><a href="../../index.html">Home</a></li>
+                    <li><a href="../sos.html">SOS</a></li>
+                    <li><a href="../helplines.html">Helplines</a></li>
+                    <li><a href="dashboard.html" class="active">Awareness</a></li>
+                    <li><a href="../login.html">Login</a></li>
+                    <li><a href="../register.html" class="btn-register">Register</a></li>
+                `;
+            }
+        }
+
+        function initCharts() {
+            const pieCtx = document.getElementById('crimePieChart').getContext('2d');
+            new Chart(pieCtx, {
+                type: 'pie',
+                data: { labels: crimeData.map(c => c.name), datasets: [{ data: crimeData.map(c => c.percentage), backgroundColor: ['#dc2626', '#f97316', '#facc15', '#10b981', '#3b82f6'], borderWidth: 0 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#4b5563' } } } }
+            });
+            const lineCtx = document.getElementById('crimeTrendChart').getContext('2d');
+            new Chart(lineCtx, {
+                type: 'line',
+                data: { labels: ['2020', '2021', '2022', '2023'], datasets: [
+                    { label: 'Cyber Crime', data: [25, 28, 32, 35], borderColor: '#dc2626', tension: 0.4, fill: false },
+                    { label: 'Theft', data: [32, 30, 29, 28], borderColor: '#f97316', tension: 0.4, fill: false },
+                    { label: 'Women Safety', data: [15, 16, 17, 18], borderColor: '#facc15', tension: 0.4, fill: false }
+                ] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#4b5563' } } }, scales: { y: { grid: { color: '#e2e8f0' }, ticks: { color: '#4b5563' } }, x: { ticks: { color: '#4b5563' } } } }
+            });
+        }
+
+        function displayCrimeTypes() {
+            document.getElementById('crime-grid').innerHTML = crimeData.map(crime => `
+                <div class="crime-card">
+                    <div class="crime-icon"><i class="fas ${crime.icon}"></i></div>
+                    <h3>${crime.name}</h3>
+                    <span class="crime-percentage">${crime.percentage}% of total crimes</span>
+                    <p>${crime.description}</p>
+                    <div class="crime-prevention"><small><i class="fas fa-check-circle"></i> Prevention: ${crime.prevention}</small></div>
+                    <small style="color: #f97316;"><i class="fas fa-phone"></i> Helpline: ${crime.helpline} | ${crime.stats}</small>
+                </div>
+            `).join('');
+        }
+
+        function displaySafetyTips() {
+            document.getElementById('tips-grid').innerHTML = safetyTips.map(tip => `
+                <div class="tip-card">
+                    <div class="tip-header"><i class="fas ${tip.icon}"></i><h3>${tip.category}</h3></div>
+                    <ul class="tip-list">${tip.tips.map(t => `<li><i class="fas fa-check-circle"></i> ${t}</li>`).join('')}</ul>
+                </div>
+            `).join('');
+        }
+
+        function displayCampaigns() {
+            document.getElementById('campaigns-grid').innerHTML = campaigns.map(campaign => {
+                const percentage = (campaign.participants / campaign.target) * 100;
+                return `
+                    <div class="campaign-card">
+                        <h3>${campaign.title}</h3>
+                        <p>${campaign.description}</p>
+                        <div class="campaign-date"><i class="fas fa-calendar"></i> ${campaign.date}</div>
+                        <div class="campaign-stats"><span>${campaign.participants.toLocaleString()} joined</span><span>Target: ${campaign.target.toLocaleString()}</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: ${percentage}%;"></div></div>
+                        <button class="campaign-btn" onclick="joinCampaign('${campaign.title}')"><i class="fas fa-hand-peace"></i> Join Campaign</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function joinCampaign(title) {
+            alert(`🎉 You've joined "${title}"! Together, we can create awareness!`);
+        }
+
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            if (!token) window.location.href = '../login.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            updateNavigation();
+            initCharts();
+            displayCrimeTypes();
+            displaySafetyTips();
+            displayCampaigns();
+        });
+    </script>
+</body>
+</html>

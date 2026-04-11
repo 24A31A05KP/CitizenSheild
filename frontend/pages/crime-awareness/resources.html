@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safety Resources - CitizenShield</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #ffffff;
+            color: #1e293b;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #dc2626, #f97316);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(220,38,38,0.3);
+        }
+
+        .logo-icon i { font-size: 1.4rem; color: white; }
+        .logo-text { font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, #dc2626, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .logo-tag { font-size: 0.7rem; color: #f97316; margin-left: 0.5rem; }
+        .nav-menu { display: flex; list-style: none; gap: 2rem; align-items: center; }
+        .nav-menu a { text-decoration: none; color: #334155; font-weight: 500; transition: color 0.3s; cursor: pointer; position: relative; }
+        .nav-menu a:hover, .nav-menu a.active { color: #dc2626; }
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #dc2626, #f97316);
+            transition: width 0.3s;
+        }
+        .nav-menu a:hover::after, .nav-menu a.active::after { width: 100%; }
+
+        /* Resources Container */
+        .resources-container {
+            min-height: 100vh;
+            background: #ffffff;
+            padding-top: 80px;
+        }
+
+        .resources-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .resources-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .resources-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e293b, #dc2626);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .resources-header h1 i {
+            background: none;
+            -webkit-text-fill-color: #dc2626;
+        }
+
+        .resources-header p {
+            color: #64748b;
+            margin-top: 0.5rem;
+        }
+
+        /* Category Filters */
+        .category-filters {
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .filter-btn {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: linear-gradient(135deg, #dc2626, #f97316);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220,38,38,0.3);
+        }
+
+        /* Resources Grid */
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.8rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Colorful Resource Cards */
+        .resource-card[data-category="self-defense"] { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .resource-card[data-category="cyber"] { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .resource-card[data-category="women"] { background: linear-gradient(135deg, #11998e, #38ef7d); }
+        .resource-card[data-category="legal"] { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .resource-card[data-category="emergency"] { background: linear-gradient(135deg, #fc4a1a, #f7b733); }
+
+        .resource-card {
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            color: white;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.2);
+        }
+
+        .resource-header {
+            background: rgba(0,0,0,0.2);
+            padding: 1.5rem;
+            text-align: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .resource-header i {
+            font-size: 2.5rem;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .resource-header h3 {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .resource-body {
+            padding: 1.5rem;
+        }
+
+        .resource-body p {
+            color: rgba(255,255,255,0.9);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .resource-list {
+            list-style: none;
+            margin-bottom: 1rem;
+        }
+
+        .resource-list li {
+            padding: 0.6rem 0;
+            color: rgba(255,255,255,0.9);
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .resource-list li:last-child {
+            border-bottom: none;
+        }
+
+        .resource-list li i {
+            color: #ffd966;
+            font-size: 0.8rem;
+            width: 20px;
+        }
+
+        .download-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(255,255,255,0.95);
+            border: none;
+            border-radius: 12px;
+            color: #1e293b;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Emergency Footer */
+        .emergency-footer {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .emergency-footer h3 {
+            color: #1e293b;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .emergency-footer h3 i {
+            color: #f97316;
+        }
+
+        .emergency-numbers {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+
+        .emergency-number {
+            background: linear-gradient(135deg, #dc2626, #f97316);
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .emergency-number:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(220,38,38,0.3);
+        }
+
+        .emergency-footer p {
+            color: #64748b;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: 50px;
+            z-index: 3000;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        .toast.error { background: #dc2626; }
+        .toast.warning { background: #f59e0b; }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0%); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0%); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: #dc2626;
+        }
+
+        /* Hidden PDF Preview Container */
+        #pdf-preview-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            overflow: auto;
+        }
+        
+        #pdf-content {
+            background: white;
+            width: 800px;
+            margin: 20px auto;
+            padding: 40px;
+            border-radius: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .hamburger { display: block; }
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: white;
+                flex-direction: column;
+                padding: 1rem;
+                gap: 1rem;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            }
+            .nav-menu.active { display: flex; }
+            .resources-content { padding: 1rem; }
+            .resources-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo" onclick="window.location.href='../../index.html'">
+                <div class="logo-icon"><i class="fas fa-shield-alt"></i></div>
+                <div><span class="logo-text">CitizenShield</span><span class="logo-tag">Protecting Every Citizen</span></div>
+            </div>
+            <button class="hamburger" id="hamburger">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="nav-menu" id="nav-menu"></ul>
+        </div>
+    </nav>
+
+    <div class="resources-container">
+        <div class="resources-content">
+            <div class="resources-header">
+                <h1><i class="fas fa-download"></i> Safety Resources</h1>
+                <p>Downloadable guides, posters, and materials for crime prevention and safety awareness</p>
+            </div>
+
+            <div class="category-filters">
+                <button class="filter-btn active" onclick="filterResources('all')">All Resources</button>
+                <button class="filter-btn" onclick="filterResources('self-defense')">Self Defense</button>
+                <button class="filter-btn" onclick="filterResources('cyber')">Cyber Safety</button>
+                <button class="filter-btn" onclick="filterResources('women')">Women Safety</button>
+                <button class="filter-btn" onclick="filterResources('legal')">Legal Rights</button>
+                <button class="filter-btn" onclick="filterResources('emergency')">Emergency Prep</button>
+            </div>
+
+            <div class="resources-grid" id="resources-grid"></div>
+
+            <div class="emergency-footer">
+                <h3><i class="fas fa-phone-alt"></i> Emergency Helplines</h3>
+                <div class="emergency-numbers">
+                    <span class="emergency-number" onclick="makeCall('100')">🚔 Police: 100</span>
+                    <span class="emergency-number" onclick="makeCall('1091')">👩 Women: 1091</span>
+                    <span class="emergency-number" onclick="makeCall('102')">🚑 Ambulance: 102</span>
+                    <span class="emergency-number" onclick="makeCall('1930')">💻 Cyber: 1930</span>
+                    <span class="emergency-number" onclick="makeCall('1098')">👶 Child: 1098</span>
+                    <span class="emergency-number" onclick="makeCall('112')">🆘 112</span>
+                </div>
+                <p><i class="fas fa-shield-alt"></i> Save these numbers in your phone for quick access</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="pdf-preview-container">
+        <div id="pdf-content"></div>
+    </div>
+
+    <script>
+        // Resources Data
+        const resources = [
+            { id: 1, title: "Self Defense Guide", category: "self-defense", icon: "fa-fist-raised", 
+              description: "Learn basic self-defense techniques to protect yourself in dangerous situations.",
+              tips: [
+                "Palm Strike: Use the heel of your palm to strike upward at an attacker's nose or chin.",
+                "Knee Strike: If grabbed from behind, stomp on foot and strike backward with knee to groin.",
+                "Escape from Wrist Grab: Twist arm toward attacker's thumb and pull away forcefully.",
+                "Escape from Bear Hug: Drop weight, stomp on foot, and strike backward with head or elbows.",
+                "Using Keys as Defense: Hold a key between fingers to strike sensitive areas.",
+                "Verbal Defense: Use loud, assertive voice to say 'BACK OFF!' or 'HELP!' to attract attention.",
+                "Situational Awareness: Always be aware of surroundings. Avoid both earbuds when alone.",
+                "Trust Your Instincts: If situation feels wrong, leave immediately."
+              ], downloadName: "Self_Defense_Guide.pdf" },
+            { id: 2, title: "Cyber Safety Handbook", category: "cyber", icon: "fa-laptop",
+              description: "Stay safe online with these essential cyber security practices.",
+              tips: [
+                "Strong Passwords: Use 12+ characters with uppercase, lowercase, numbers, and symbols.",
+                "Two-Factor Authentication: Enable 2FA on email, banking, and social media accounts.",
+                "Spot Phishing: Check sender email carefully. Companies never ask for passwords via email.",
+                "Safe Social Media: Set profiles to private. Don't share location or travel plans publicly.",
+                "Secure Wi-Fi: Never use public Wi-Fi for banking. Use VPN for sensitive activities.",
+                "Update Regularly: Keep devices, apps, and antivirus updated for security patches.",
+                "Back Up Data: Regularly back up important files to external drive or cloud storage.",
+                "Monitor Accounts: Check bank statements monthly for unauthorized transactions."
+              ], downloadName: "Cyber_Safety_Handbook.pdf" },
+            { id: 3, title: "Women Safety Guide", category: "women", icon: "fa-female",
+              description: "Essential safety tips and resources for women's safety.",
+              tips: [
+                "Night Travel: Share live location with family. Use trusted cabs with GPS tracking.",
+                "Emergency Numbers: Save 1091 (Women Helpline) and 100 (Police) as speed dial.",
+                "Zero FIR: File complaint at ANY police station regardless of where crime occurred.",
+                "Self-Defense Apps: Install safety apps that send alerts with your location.",
+                "Public Transport: Sit near driver or in well-lit areas. Keep phone accessible.",
+                "Workplace Safety: Know rights under POSH Act. Report to Internal Complaints Committee.",
+                "Domestic Violence: Right to reside in shared household. Contact protection officers.",
+                "Stalking: Document incidents. Call 100 immediately if you feel threatened."
+              ], downloadName: "Women_Safety_Guide.pdf" },
+            { id: 4, title: "Legal Rights Handbook", category: "legal", icon: "fa-gavel",
+              description: "Know your legal rights and how to file complaints.",
+              tips: [
+                "File FIR: Visit nearest police station. Provide written complaint. Police must register.",
+                "Zero FIR: Women can file at any station. Will be transferred to correct jurisdiction.",
+                "Free FIR Copy: You're entitled to free copy under Section 154 CrPC.",
+                "Women's Rights: Protection under IPC 498A, DV Act, and POSH Act.",
+                "Cyber Crime: Call 1930 or visit cybercrime.gov.in to report online fraud.",
+                "Domestic Violence: File complaint with Protection Officer for restraining orders.",
+                "POSH Act: Every workplace must have Internal Complaints Committee.",
+                "Free Legal Aid: Contact Legal Services Authority (15100) for free assistance."
+              ], downloadName: "Legal_Rights_Handbook.pdf" },
+            { id: 5, title: "Emergency Preparedness Guide", category: "emergency", icon: "fa-ambulance",
+              description: "Be prepared for any emergency situation.",
+              tips: [
+                "Emergency Kit: Water, food, flashlight, batteries, first aid, medications, documents.",
+                "Family Plan: Designate meeting points, share contacts, practice evacuation routes.",
+                "First Aid: Learn CPR, how to stop bleeding, treat burns and fractures.",
+                "Fire Safety: Install smoke detectors, know fire exits, never leave cooking unattended.",
+                "Earthquake Safety: Drop, Cover, Hold On. Stay away from windows.",
+                "Flood Safety: Move to higher ground, avoid driving through floodwaters.",
+                "Medical Emergency: Keep allergy and medication list. Call 102 for ambulance.",
+                "Important Contacts: Keep printed list of emergency numbers and neighbors."
+              ], downloadName: "Emergency_Preparedness_Guide.pdf" },
+            { id: 6, title: "Cyber Crime Prevention", category: "cyber", icon: "fa-shield-alt",
+              description: "Protect yourself from online scams and fraud.",
+              tips: [
+                "UPI Fraud: Never share UPI PIN. Scammers pose as customer support.",
+                "Phishing Emails: Check sender address. Banks never ask for personal info via email.",
+                "Fake Job Scams: Legitimate companies never ask money for job applications.",
+                "Lottery Scams: If you didn't enter, you haven't won. Ignore these messages.",
+                "OTP Security: Never share OTP. Banks and companies never ask for OTP.",
+                "Secure Banking: Use official apps. Avoid clicking links in SMS or emails.",
+                "Report Cyber Crime: Call 1930 immediately if you're a victim.",
+                "Freeze Cards: If compromised, freeze card immediately through banking app."
+              ], downloadName: "Cyber_Crime_Prevention.pdf" },
+            { id: 7, title: "Workplace Safety Guide", category: "women", icon: "fa-briefcase",
+              description: "Stay safe at your workplace with these essential tips.",
+              tips: [
+                "POSH Act: Every organization must have Internal Complaints Committee (ICC).",
+                "Reporting Process: Document incidents, report to ICC within 3 months.",
+                "Confidentiality: Your identity will be kept confidential during investigation.",
+                "Late Hours: Inform family before working late. Use company transport.",
+                "Safe Commute: Avoid isolated routes. Share live location while commuting.",
+                "Emergency Exits: Know fire exits and evacuation routes in building.",
+                "Security Protocols: Report security concerns to HR or security personnel.",
+                "Digital Safety: Lock computer when away. Never share passwords."
+              ], downloadName: "Workplace_Safety_Guide.pdf" },
+            { id: 8, title: "Child Safety Handbook", category: "emergency", icon: "fa-child",
+              description: "Essential safety tips for protecting children.",
+              tips: [
+                "Online Safety: Use parental controls. Monitor screen time and activities.",
+                "Stranger Danger: Teach about safe strangers (police, teachers, neighbors).",
+                "Child Helpline: 1098 available 24/7 for any child in distress.",
+                "School Safety: Know school's safety protocols. Discuss safe routes.",
+                "Bullying Prevention: Teach children to speak up. Report to school authorities.",
+                "Social Media: Minimum age 13. Monitor accounts closely.",
+                "Safe Touch: Teach about safe and unsafe touch. Tell trusted adult.",
+                "Emergency Contacts: Children should memorize parent's phone number."
+              ], downloadName: "Child_Safety_Handbook.pdf" },
+            { id: 9, title: "Financial Fraud Prevention", category: "legal", icon: "fa-chart-line",
+              description: "Protect yourself from financial scams and fraud.",
+              tips: [
+                "Investment Scams: Too good to be true = scam. Verify SEBI registration.",
+                "UPI Fraud: Never share PIN or scan unknown QR codes.",
+                "Credit Card Safety: Enable transaction alerts. Report lost cards immediately.",
+                "Bank Impersonation: Banks never ask OTP. Hang up and call bank directly.",
+                "Loan Scams: Legitimate lenders never ask advance fees. Verify credentials.",
+                "KYC Fraud: Never share KYC documents with unknown people.",
+                "Reporting Fraud: Call 1930 immediately for cyber fraud.",
+                "Freeze Accounts: If fraud occurs, freeze account through banking app."
+              ], downloadName: "Financial_Fraud_Prevention.pdf" }
+        ];
+
+        let allResources = resources;
+
+        function makeCall(number) {
+            if (confirm(`📞 Call ${number}?`)) {
+                window.location.href = `tel:${number}`;
+                showToast(`Calling ${number}...`, 'success');
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Simple working PDF download using window.print and save as PDF
+        function downloadPDF(resourceId) {
+            const resource = resources.find(r => r.id === resourceId);
+            if (!resource) return;
+            
+            showToast(`📄 Generating ${resource.title}...`, 'warning');
+            
+            // Build tips HTML
+            let tipsHtml = '';
+            for (let i = 0; i < resource.tips.length; i++) {
+                tipsHtml += `
+                    <div style="padding: 12px 0; border-bottom: 1px solid #e2e8f0;">
+                        <div style="display: flex; gap: 12px;">
+                            <span style="color: #10b981; font-weight: bold; font-size: 18px;">✓</span>
+                            <span style="flex: 1; color: #334155; font-size: 14px; line-height: 1.5;">${resource.tips[i]}</span>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Create a new window for printing
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>${resource.title} - CitizenShield</title>
+                    <style>
+                        body {
+                            font-family: 'Segoe UI', Arial, sans-serif;
+                            margin: 0;
+                            padding: 40px;
+                            background: white;
+                        }
+                        .container {
+                            max-width: 800px;
+                            margin: 0 auto;
+                        }
+                        .header {
+                            text-align: center;
+                            border-bottom: 3px solid #dc2626;
+                            padding-bottom: 20px;
+                            margin-bottom: 30px;
+                        }
+                        .header h1 {
+                            color: #dc2626;
+                            font-size: 28px;
+                            margin-bottom: 10px;
+                        }
+                        .header p {
+                            color: #64748b;
+                            font-size: 14px;
+                        }
+                        .tips-section {
+                            background: #f8fafc;
+                            padding: 25px;
+                            border-radius: 12px;
+                            margin: 20px 0;
+                        }
+                        .tips-section h2 {
+                            color: #f97316;
+                            font-size: 20px;
+                            margin-bottom: 20px;
+                            border-left: 4px solid #f97316;
+                            padding-left: 12px;
+                        }
+                        .emergency-box {
+                            background: linear-gradient(135deg, #dc2626, #f97316);
+                            color: white;
+                            padding: 25px;
+                            border-radius: 12px;
+                            text-align: center;
+                            margin: 30px 0;
+                        }
+                        .emergency-box h3 {
+                            margin-bottom: 15px;
+                            font-size: 18px;
+                        }
+                        .emergency-numbers {
+                            display: flex;
+                            justify-content: center;
+                            gap: 12px;
+                            flex-wrap: wrap;
+                        }
+                        .emergency-numbers span {
+                            background: rgba(255,255,255,0.2);
+                            padding: 5px 12px;
+                            border-radius: 20px;
+                            font-size: 13px;
+                        }
+                        .footer {
+                            text-align: center;
+                            font-size: 11px;
+                            color: #94a3b8;
+                            padding-top: 20px;
+                            border-top: 1px solid #e2e8f0;
+                            margin-top: 30px;
+                        }
+                        @media print {
+                            body { padding: 20px; }
+                            .tips-section { break-inside: avoid; }
+                            .emergency-box { break-inside: avoid; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <h1>${resource.title}</h1>
+                            <p>CitizenShield - Your Safety Companion</p>
+                        </div>
+                        
+                        <div class="tips-section">
+                            <h2>📋 ${resource.tips.length} Key Safety Tips</h2>
+                            ${tipsHtml}
+                        </div>
+                        
+                        <div class="emergency-box">
+                            <h3>🚨 Emergency Helplines (24x7)</h3>
+                            <div class="emergency-numbers">
+                                <span>Police: 100</span>
+                                <span>Women: 1091</span>
+                                <span>Ambulance: 102</span>
+                                <span>Cyber: 1930</span>
+                                <span>Child: 1098</span>
+                                <span>National: 112</span>
+                            </div>
+                            <p style="margin-top: 15px; font-size: 12px;">Save these numbers for quick access</p>
+                        </div>
+                        
+                        <div class="footer">
+                            <p>© ${new Date().getFullYear()} CitizenShield - Empowering citizens through safety awareness</p>
+                            <p>Emergency Helplines: Police 100 | Women 1091 | Ambulance 102 | Cyber 1930 | Child 1098</p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            
+            // Wait for content to load then print/save as PDF
+            printWindow.onload = function() {
+                setTimeout(() => {
+                    printWindow.print();
+                    showToast(`✅ ${resource.title} ready for download`, 'success');
+                }, 500);
+            };
+        }
+
+        function filterResources(category) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const filtered = category === 'all' ? allResources : allResources.filter(r => r.category === category);
+            displayResources(filtered);
+            showToast(`Showing ${filtered.length} ${category === 'all' ? 'resources' : category} resources`, 'success');
+        }
+
+        function displayResources(resourcesList) {
+            const container = document.getElementById('resources-grid');
+            
+            if (resourcesList.length === 0) {
+                container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: #64748b;"><i class="fas fa-folder-open" style="font-size: 3rem; margin-bottom: 1rem;"></i><p>No resources found</p></div>`;
+                return;
+            }
+            
+            container.innerHTML = resourcesList.map(resource => `
+                <div class="resource-card" data-category="${resource.category}">
+                    <div class="resource-header">
+                        <i class="fas ${resource.icon}"></i>
+                        <h3>${resource.title}</h3>
+                    </div>
+                    <div class="resource-body">
+                        <p>${resource.description}</p>
+                        <ul class="resource-list">
+                            ${resource.tips.slice(0, 4).map(tip => `<li><i class="fas fa-check-circle"></i> ${tip.substring(0, 80)}${tip.length > 80 ? '...' : ''}</li>`).join('')}
+                            <li><i class="fas fa-ellipsis-h"></i> ${resource.tips.length} detailed tips inside PDF</li>
+                        </ul>
+                        <button class="download-btn" onclick="downloadPDF(${resource.id})">
+                            <i class="fas fa-download"></i> Download PDF
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateNavigation() {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            const navMenu = document.getElementById('nav-menu');
+            
+            if (!navMenu) return;
+            
+            if (token && user) {
+                let menuHtml = `
+                    <li><a href="../../index.html">Home</a></li>
+                    <li><a href="../sos.html">SOS</a></li>
+                    <li><a href="../helplines.html">Helplines</a></li>
+                    <li><a href="dashboard.html">Awareness</a></li>
+                    <li><a href="resources.html" class="active">Resources</a></li>
+                    <li><a href="../profile.html">Profile</a></li>
+                `;
+                if (user.role === 'admin') menuHtml += `<li><a href="../admin.html">Admin</a></li>`;
+                menuHtml += `<li><a href="#" id="logout-link">Logout</a></li>`;
+                navMenu.innerHTML = menuHtml;
+                
+                document.getElementById('logout-link')?.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    showToast('Logged out successfully', 'success');
+                    setTimeout(() => window.location.href = '../../index.html', 1000);
+                });
+            } else {
+                navMenu.innerHTML = `
+                    <li><a href="../../index.html">Home</a></li>
+                    <li><a href="../sos.html">SOS</a></li>
+                    <li><a href="../helplines.html">Helplines</a></li>
+                    <li><a href="dashboard.html">Awareness</a></li>
+                    <li><a href="resources.html" class="active">Resources</a></li>
+                    <li><a href="../login.html">Login</a></li>
+                    <li><a href="../register.html">Register</a></li>
+                `;
+            }
+        }
+
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('nav-menu');
+        
+        if (hamburger) {
+            hamburger.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+                hamburger.innerHTML = navMenu.classList.contains('active') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateNavigation();
+            displayResources(allResources);
+        });
+    </script>
+</body>
+</html>

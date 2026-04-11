@@ -1,8 +1,15 @@
+-- ============================================
+-- CitizenShield Database Schema
+-- Crime Awareness & Safety Platform
+-- ============================================
+
 -- Create database
 CREATE DATABASE IF NOT EXISTS secureshe_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE secureshe_db;
 
--- Users table
+-- ============================================
+-- USERS TABLE
+-- ============================================
 CREATE TABLE IF NOT EXISTS users (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
@@ -16,10 +23,13 @@ CREATE TABLE IF NOT EXISTS users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     last_login TIMESTAMP NULL,
     INDEX idx_email (email),
-    INDEX idx_phone (phone)
+    INDEX idx_phone (phone),
+    INDEX idx_role (role)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Emergency contacts table
+-- ============================================
+-- EMERGENCY CONTACTS TABLE
+-- ============================================
 CREATE TABLE IF NOT EXISTS emergency_contacts (
     id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT NOT NULL,
@@ -32,10 +42,13 @@ CREATE TABLE IF NOT EXISTS emergency_contacts (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     INDEX idx_user (user_id),
-    INDEX idx_phone (phone)
+    INDEX idx_phone (phone),
+    INDEX idx_primary (is_primary)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- SOS alerts table
+-- ============================================
+-- SOS ALERTS TABLE
+-- ============================================
 CREATE TABLE IF NOT EXISTS sos_alerts (
     id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT NOT NULL,
@@ -54,7 +67,9 @@ CREATE TABLE IF NOT EXISTS sos_alerts (
     INDEX idx_created (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- SOS notifications table
+-- ============================================
+-- SOS NOTIFICATIONS TABLE
+-- ============================================
 CREATE TABLE IF NOT EXISTS sos_notifications (
     id INT PRIMARY KEY AUTO_INCREMENT,
     sos_id INT NOT NULL,
@@ -68,45 +83,9 @@ CREATE TABLE IF NOT EXISTS sos_notifications (
     INDEX idx_sos (sos_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Location sharing table (MISSING - ADD THIS AT THE END)
-CREATE TABLE IF NOT EXISTS location_shares (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT NOT NULL,
-    latitude DECIMAL(10, 8) NOT NULL,
-    longitude DECIMAL(11, 8) NOT NULL,
-    accuracy FLOAT,
-    mode ENUM('live', 'one_time') DEFAULT 'live',
-    recipients JSON,
-    is_active BOOLEAN DEFAULT TRUE,
-    started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    ended_at TIMESTAMP NULL,
-    last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    INDEX idx_user_active (user_id, is_active)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
--- Incident reports table
-CREATE TABLE IF NOT EXISTS reports (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT,
-    is_anonymous BOOLEAN DEFAULT TRUE,
-    incident_type ENUM('unsafe_area', 'harassment', 'assault', 'stalking', 'lack_of_streetlight', 'other') NOT NULL,
-    latitude DECIMAL(10, 8),
-    longitude DECIMAL(11, 8),
-    location_description VARCHAR(500),
-    description TEXT,
-    incident_time TIMESTAMP NULL,
-    severity ENUM('low', 'medium', 'high', 'critical') DEFAULT 'medium',
-    status ENUM('pending', 'verified', 'resolved', 'rejected') DEFAULT 'pending',
-    verified_count INT DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
-    INDEX idx_location (latitude, longitude),
-    INDEX idx_status (status),
-    INDEX idx_incident_type (incident_type)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- Helplines table
+-- ============================================
+-- HELPLINES TABLE
+-- ============================================
 CREATE TABLE IF NOT EXISTS helplines (
     id INT PRIMARY KEY AUTO_INCREMENT,
     country VARCHAR(100),
@@ -119,41 +98,125 @@ CREATE TABLE IF NOT EXISTS helplines (
     INDEX idx_service (service_name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Resources table (safety tips, articles)
-CREATE TABLE IF NOT EXISTS resources (
+-- ============================================
+-- INSERT HELPLINES DATA
+-- ============================================
+INSERT INTO helplines (country, service_name, phone_number, description) VALUES
+('India', 'National Emergency', '112', 'Single emergency number for police, fire, ambulance'),
+('India', 'Police', '100', 'Immediate police assistance for emergencies'),
+('India', 'Fire', '101', 'Fire emergency services'),
+('India', 'Ambulance', '102', 'Medical emergency services'),
+('India', 'Women Helpline', '1091', '24x7 assistance for women in distress'),
+('India', 'Child Helpline', '1098', 'Assistance for children in need'),
+('India', 'National Commission for Women', '011-23237166', 'Women rights and harassment complaints'),
+('India', 'Anti-Human Trafficking', '14478', 'Report human trafficking incidents'),
+('India', 'Cyber Crime Helpline', '1930', 'Report cyber crimes and online fraud');
+
+-- ============================================
+-- CRIME REPORTS TABLE (for anonymous reporting)
+-- ============================================
+CREATE TABLE IF NOT EXISTS crime_reports (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    title VARCHAR(200) NOT NULL,
-    slug VARCHAR(200) UNIQUE NOT NULL,
-    category VARCHAR(50),
-    content TEXT,
-    excerpt VARCHAR(500),
-    author VARCHAR(100),
-    views INT DEFAULT 0,
-    is_published BOOLEAN DEFAULT TRUE,
+    user_id INT,
+    is_anonymous BOOLEAN DEFAULT TRUE,
+    crime_type ENUM('cyber', 'theft', 'women', 'assault', 'fraud', 'child', 'other') NOT NULL,
+    latitude DECIMAL(10, 8),
+    longitude DECIMAL(11, 8),
+    location_description VARCHAR(500),
+    description TEXT,
+    incident_time TIMESTAMP NULL,
+    severity ENUM('low', 'medium', 'high', 'critical') DEFAULT 'medium',
+    status ENUM('pending', 'reviewed', 'resolved') DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_category (category),
-    INDEX idx_slug (slug)
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_crime_type (crime_type),
+    INDEX idx_status (status),
+    INDEX idx_created (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Insert sample helplines
-INSERT INTO helplines (country, service_name, phone_number, description) VALUES
-('India', 'Police', '100', 'Emergency police assistance'),
-('India', 'Women Helpline', '1091', '24/7 women helpline'),
-('India', 'Ambulance', '102', 'Emergency medical services'),
-('India', 'Child Helpline', '1098', 'Child protection helpline'),
-('India', 'National Emergency Number', '112', 'Unified emergency number'),
-('USA', 'Police', '911', 'Emergency services'),
-('UK', 'Police', '999', 'Emergency services'),
-('Australia', 'Police', '000', 'Emergency services');
+-- ============================================
+-- SAFETY TIPS TABLE
+-- ============================================
+CREATE TABLE IF NOT EXISTS safety_tips (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    category VARCHAR(50) NOT NULL,
+    title VARCHAR(200) NOT NULL,
+    content TEXT NOT NULL,
+    icon VARCHAR(50),
+    likes INT DEFAULT 0,
+    is_published BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_category (category),
+    INDEX idx_published (is_published)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Insert sample resources
-INSERT INTO resources (title, slug, category, excerpt) VALUES
-('Personal Safety Tips', 'personal-safety-tips', 'safety', 'Essential tips for personal safety'),
-('Cyber Safety Guide', 'cyber-safety-guide', 'cyber', 'Stay safe online'),
-('Self Defense Basics', 'self-defense-basics', 'self-defense', 'Basic self-defense techniques'),
-('Travel Safety for Women', 'travel-safety', 'travel', 'Stay safe while traveling');
+-- ============================================
+-- INSERT SAFETY TIPS
+-- ============================================
+INSERT INTO safety_tips (category, title, content, icon) VALUES
+('digital', 'Never Share OTP', 'Never share your OTP, PIN, or password with anyone, even if they claim to be from the bank.', 'fa-laptop'),
+('digital', 'Enable Two-Factor Authentication', 'Always enable 2FA on your email, banking, and social media accounts for extra security.', 'fa-shield-alt'),
+('personal', 'Share Your Location', 'Always share your live location with trusted family members when traveling alone.', 'fa-map-marker-alt'),
+('personal', 'Trust Your Instincts', 'If something feels wrong, trust your gut and remove yourself from the situation.', 'fa-brain'),
+('home', 'Lock Doors & Windows', 'Always keep doors and windows locked, even when at home, especially at night.', 'fa-home'),
+('home', 'Install Peephole', 'Install a peephole or doorbell camera to see who is at the door before opening.', 'fa-video'),
+('financial', 'Never Share Bank Details', 'Never share your CVV, UPI PIN, or OTP with anyone. Banks never ask for these.', 'fa-credit-card'),
+('financial', 'Verify Before Investing', 'Always verify investment schemes with SEBI before investing money.', 'fa-chart-line');
 
--- Create admin user (password: Admin@123)
+-- ============================================
+-- AWARENESS CAMPAIGNS TABLE
+-- ============================================
+CREATE TABLE IF NOT EXISTS awareness_campaigns (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(200) NOT NULL,
+    description TEXT,
+    start_date DATE,
+    end_date DATE,
+    target_audience VARCHAR(100),
+    target_participants INT DEFAULT 0,
+    participants INT DEFAULT 0,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_active (is_active),
+    INDEX idx_dates (start_date, end_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================
+-- INSERT CAMPAIGNS
+-- ============================================
+INSERT INTO awareness_campaigns (title, description, start_date, end_date, target_participants) VALUES
+('Cyber Suraksha', 'Learn to identify and prevent online frauds, phishing attacks, and social media scams', '2026-04-01', '2026-04-15', 5000),
+('Safe City Initiative', 'Community safety walks, CCTV awareness, and emergency response training', '2026-04-10', '2026-04-25', 10000),
+('Women Safety Workshop', 'Self-defense training, legal rights awareness, and helpline awareness', '2026-04-05', '2026-04-20', 3000),
+('Cyber Crime Awareness Week', 'Special awareness program about cyber crimes and how to report them', '2026-05-01', '2026-05-07', 2000);
+
+-- ============================================
+-- LOCATION SHARES TABLE
+-- ============================================
+CREATE TABLE IF NOT EXISTS location_shares (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    latitude DECIMAL(10, 8),
+    longitude DECIMAL(11, 8),
+    accuracy FLOAT,
+    mode VARCHAR(20) DEFAULT 'live',
+    recipients JSON,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ended_at TIMESTAMP NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_user_active (user_id, is_active)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================
+-- ADMIN USER (password: Admin@123)
+-- Note: This is a bcrypt hash for "Admin@123"
+-- ============================================
 INSERT INTO users (name, email, phone, password_hash, role, is_verified) VALUES
-('Admin', 'admin@secureshe.com', '9999999999', '$2b$12$LQvBcJfqJcYhxJqJcYhxJqJcYhxJqJcYhxJqJcYhxJqJcYhxJqJc', 'admin', TRUE);
+('Admin', 'admin@citizenshield.com', '9999999999', '$2b$12$LQvBcJfqJcYhxJqJcYhxJqJcYhxJqJcYhxJqJcYhxJqJcYhJqJc', 'admin', TRUE)
+ON DUPLICATE KEY UPDATE id=id;
+
+-- ============================================
+-- VERIFY TABLES CREATED
+-- ============================================
+SHOW TABLES;

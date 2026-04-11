@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crime Penalties & Punishments - CitizenShield</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #ffffff;
+            color: #1e293b;
+            overflow-x: hidden;
+        }
+
+        .penalties-container {
+            min-height: 100vh;
+            background: #ffffff;
+            padding-top: 80px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background - Subtle for White Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .animated-bg .particle {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(220,38,38,0.03), rgba(249,115,22,0.02), transparent);
+            border-radius: 50%;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        .particle-1 { top: 10%; left: -150px; animation-delay: 0s; }
+        .particle-2 { bottom: 20%; right: -200px; animation-delay: 3s; width: 400px; height: 400px; }
+        .particle-3 { top: 50%; left: 50%; transform: translate(-50%, -50%); width: 600px; height: 600px; animation-duration: 25s; opacity: 0.15; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(5deg); }
+        }
+
+        /* Navigation - White */
+        .navbar {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #dc2626, #f97316);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(220,38,38,0.3);
+        }
+
+        .logo-icon i { font-size: 1.4rem; color: white; }
+        .logo-text { font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, #dc2626, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .logo-tag { font-size: 0.7rem; color: #f97316; margin-left: 0.5rem; }
+        .nav-menu { display: flex; list-style: none; gap: 2rem; align-items: center; }
+        .nav-menu a { text-decoration: none; color: #334155; font-weight: 500; transition: all 0.3s; cursor: pointer; position: relative; }
+        .nav-menu a:hover, .nav-menu a.active { color: #dc2626; }
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #dc2626, #f97316);
+            transition: width 0.3s;
+        }
+        .nav-menu a:hover::after, .nav-menu a.active::after { width: 100%; }
+
+        /* Main Content */
+        .penalties-content {
+            position: relative;
+            z-index: 10;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .penalties-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .penalties-header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e293b, #dc2626, #f97316);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .penalties-header p {
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+
+        /* Quick Stats Row - White Cards with Shadow */
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-badge {
+            background: white;
+            border-radius: 60px;
+            padding: 0.8rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+
+        .stat-badge:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-color: #f97316;
+        }
+
+        .stat-badge i { font-size: 1.2rem; color: #f97316; }
+        .stat-badge span { color: #1e293b; font-weight: 600; }
+        .stat-badge .count { color: #dc2626; font-size: 1.3rem; font-weight: 800; margin-right: 0.3rem; }
+
+        /* Disclaimer - Light Background */
+        .disclaimer {
+            background: linear-gradient(135deg, rgba(249,115,22,0.08), rgba(220,38,38,0.05));
+            border-left: 4px solid #f97316;
+            border-radius: 16px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .disclaimer i { color: #f97316; font-size: 1.2rem; }
+        .disclaimer p { color: #475569; font-size: 0.85rem; }
+        .disclaimer p strong { color: #dc2626; }
+
+        /* Legal Rights Info Cards - White with Shadow */
+        .legal-rights-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .rights-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.2rem;
+            text-align: center;
+            transition: all 0.3s;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .rights-card:hover {
+            transform: translateY(-5px);
+            border-color: #f97316;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .rights-card i {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #dc2626, #f97316);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .rights-card h4 {
+            color: #1e293b;
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .rights-card p {
+            color: #64748b;
+            font-size: 0.75rem;
+        }
+
+        /* Category Filters - Light Gray */
+        .category-filters {
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .filter-btn {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            padding: 0.7rem 1.5rem;
+            border-radius: 50px;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: linear-gradient(135deg, #dc2626, #f97316);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220,38,38,0.3);
+        }
+
+        /* Penalties Grid - Colorful Cards */
+        .penalties-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 1.8rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Colorful Cards by Category */
+        .penalty-card[data-category="cyber"] { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .penalty-card[data-category="women"] { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .penalty-card[data-category="theft"] { background: linear-gradient(135deg, #11998e, #38ef7d); }
+        .penalty-card[data-category="violent"] { background: linear-gradient(135deg, #fc4a1a, #f7b733); }
+        .penalty-card[data-category="financial"] { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .penalty-card[data-category="child"] { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+
+        .penalty-card {
+            border-radius: 24px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            color: white;
+        }
+
+        .penalty-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .penalty-header {
+            background: rgba(0,0,0,0.2);
+            padding: 1.2rem 1.5rem;
+            backdrop-filter: blur(5px);
+        }
+
+        .penalty-header h3 {
+            color: white;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .penalty-header h3 i {
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .penalty-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.25);
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            color: white;
+        }
+
+        .penalty-body {
+            padding: 1.5rem;
+        }
+
+        .penalty-section {
+            margin-bottom: 1rem;
+        }
+
+        .penalty-section h4 {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .penalty-section p {
+            color: rgba(255,255,255,0.9);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .punishment-details {
+            background: rgba(0,0,0,0.2);
+            border-radius: 16px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .imprisonment { color: #ffcccc; display: flex; align-items: center; gap: 0.5rem; }
+        .fine-amount { color: #facc15; display: flex; align-items: center; gap: 0.5rem; }
+
+        .bailable-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-non-bailable { background: rgba(220,38,38,0.3); color: #ffcccc; }
+        .status-bailable { background: rgba(16,185,129,0.3); color: #ccffcc; }
+        .status-cognizable { background: rgba(59,130,246,0.3); color: #cceeff; }
+
+        /* FIR Section - White Card */
+        .fir-section {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .fir-section h3 {
+            color: #1e293b;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fir-section h3 i {
+            color: #f97316;
+        }
+
+        .fir-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #dc2626, #f97316);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .step-text {
+            color: #334155;
+            font-size: 0.85rem;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .info-box i {
+            font-size: 2rem;
+            color: #3b82f6;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-box p {
+            color: #475569;
+            font-size: 0.9rem;
+        }
+
+        .info-box a {
+            color: #f97316;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: 50px;
+            z-index: 3000;
+            animation: slideInRight 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        .toast.error { background: #dc2626; }
+        .toast.warning { background: #f59e0b; }
+        
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0%); opacity: 1; }
+        }
+        @keyframes slideOutRight {
+            from { transform: translateX(0%); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: #dc2626;
+        }
+
+        @media (max-width: 768px) {
+            .hamburger { display: block; }
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: white;
+                flex-direction: column;
+                padding: 1rem;
+                gap: 1rem;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            }
+            .nav-menu.active { display: flex; }
+            .penalties-content { padding: 1rem; }
+            .penalties-grid { grid-template-columns: 1fr; }
+            .penalties-header h1 { font-size: 2rem; }
+            .fir-steps { grid-template-columns: 1fr; }
+            .stats-row { gap: 0.8rem; }
+            .stat-badge { padding: 0.5rem 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo" onclick="window.location.href='../../index.html'">
+                <div class="logo-icon"><i class="fas fa-gavel"></i></div>
+                <div><span class="logo-text">CitizenShield</span><span class="logo-tag">Know Your Rights</span></div>
+            </div>
+            <button class="hamburger" id="hamburger">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="nav-menu" id="nav-menu"></ul>
+        </div>
+    </nav>
+
+    <div class="penalties-container">
+        <div class="animated-bg">
+            <div class="particle particle-1"></div>
+            <div class="particle particle-2"></div>
+            <div class="particle particle-3"></div>
+        </div>
+
+        <div class="penalties-content">
+            <div class="penalties-header">
+                <h1><i class="fas fa-gavel"></i> Crime Penalties & Punishments</h1>
+                <p>Legal consequences under Indian Penal Code (IPC) and Special Laws</p>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-badge"><i class="fas fa-balance-scale"></i><span><span class="count" id="total-crimes">0</span> Crimes Covered</span></div>
+                <div class="stat-badge"><i class="fas fa-hourglass-half"></i><span><span class="count" id="total-imprisonment">0</span> Years Max Punishment</span></div>
+                <div class="stat-badge"><i class="fas fa-rupee-sign"></i><span><span class="count" id="total-fine">0</span> Lakhs Max Fine</span></div>
+                <div class="stat-badge"><i class="fas fa-gavel"></i><span><span class="count" id="total-acts">0</span> IPC Sections</span></div>
+            </div>
+
+            <div class="disclaimer">
+                <i class="fas fa-info-circle"></i>
+                <p><strong>Legal Disclaimer:</strong> This information is for awareness purposes only. Punishments may vary based on case severity, court discretion, and amendments. Always consult a legal professional for specific advice.</p>
+            </div>
+
+            <div class="legal-rights-section">
+                <div class="rights-card">
+                    <i class="fas fa-gavel"></i>
+                    <h4>Right to File FIR</h4>
+                    <p>Any citizen can file an FIR at the nearest police station. Police cannot refuse to register a cognizable offense.</p>
+                </div>
+                <div class="rights-card">
+                    <i class="fas fa-female"></i>
+                    <h4>Women's Rights</h4>
+                    <p>Women can file complaints at any police station. Female officers available for sensitive cases.</p>
+                </div>
+                <div class="rights-card">
+                    <i class="fas fa-child"></i>
+                    <h4>Child Rights</h4>
+                    <p>Special protections under POCSO Act. Child-friendly procedures for reporting abuse.</p>
+                </div>
+                <div class="rights-card">
+                    <i class="fas fa-phone-alt"></i>
+                    <h4>Free Legal Aid</h4>
+                    <p>Free legal assistance available through Legal Services Authorities (NALSA). Call 15100.</p>
+                </div>
+            </div>
+
+            <div class="category-filters">
+                <button class="filter-btn active" onclick="filterPenalties('all')"><i class="fas fa-list"></i> All Crimes</button>
+                <button class="filter-btn" onclick="filterPenalties('cyber')"><i class="fas fa-laptop"></i> Cyber Crimes</button>
+                <button class="filter-btn" onclick="filterPenalties('women')"><i class="fas fa-fist-raised"></i> Crimes Against Women</button>
+                <button class="filter-btn" onclick="filterPenalties('theft')"><i class="fas fa-hand-holding-usd"></i> Theft & Property</button>
+                <button class="filter-btn" onclick="filterPenalties('violent')"><i class="fas fa-fist-raised"></i> Violent Crimes</button>
+                <button class="filter-btn" onclick="filterPenalties('financial')"><i class="fas fa-chart-line"></i> Financial Fraud</button>
+                <button class="filter-btn" onclick="filterPenalties('child')"><i class="fas fa-child"></i> Child Related</button>
+            </div>
+
+            <div id="penalties-grid" class="penalties-grid"></div>
+
+            <div class="fir-section">
+                <h3><i class="fas fa-file-alt"></i> How to File an FIR (First Information Report)</h3>
+                <div class="fir-steps">
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-text">Visit the nearest police station with jurisdiction over the area where the crime occurred</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <div class="step-text">Provide written complaint or verbally state the facts to the officer-in-charge</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <div class="step-text">Get the FIR registered and obtain a free copy (Section 154 CrPC)</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">4</div>
+                        <div class="step-text">If police refuse, approach the Superintendent of Police or magistrate</div>
+                    </div>
+                </div>
+                <p style="color: #64748b; font-size: 0.8rem; text-align: center; margin-top: 0.5rem;">
+                    <i class="fas fa-info-circle"></i> For crimes against women, you can file Zero FIR at any police station
+                </p>
+            </div>
+
+            <div class="info-box">
+                <i class="fas fa-balance-scale"></i>
+                <p><strong>Need Legal Help?</strong> Contact National Legal Services Authority (NALSA) at <strong>15100</strong> or visit <a href="#">www.nalsa.gov.in</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Crime Penalties Data
+        const penaltiesData = [
+            { crime: "Cyber Stalking", category: "cyber", ipc_section: "IPC 354D, IT Act 67", description: "Repeatedly following or contacting a person online causing fear or distress.", punishment: "1 to 3 years", fine: "2,00,000", bailable: "Non-bailable", cognizable: "Yes", imprisonment_years: 3, legal_remedy: "Report to cyber cell, preserve evidence" },
+            { crime: "Identity Theft", category: "cyber", ipc_section: "IPC 419, 420, IT Act 66C", description: "Fraudulently using someone else's identity for gain.", punishment: "3 to 5 years", fine: "5,00,000", bailable: "Non-bailable", cognizable: "Yes", imprisonment_years: 5, legal_remedy: "File cyber complaint, freeze accounts" },
+            { crime: "Cyber Fraud / Phishing", category: "cyber", ipc_section: "IPC 420, IT Act 66D", description: "Cheating through fake websites, emails, or messages.", punishment: "3 to 7 years", fine: "10,00,000", bailable: "Non-bailable", cognizable: "Yes", imprisonment_years: 7, legal_remedy: "Report to cyber crime portal (1930)" },
+            { crime: "Rape", category: "women", ipc_section: "IPC 376", description: "Sexual intercourse without consent.", punishment: "10 years to life", fine: "As per court", bailable: "Non-bailable", cognizable: "Yes", imprisonment_years: 20, legal_remedy: "Immediate medical examination, statement before magistrate" },
+            { crime: "Sexual Harassment", category: "women", ipc_section: "IPC 354A, POSH Act", description: "Unwelcome sexual advances, comments, or physical contact.", punishment: "1 to 3 years", fine: "50,000", bailable: "Bailable", cognizable: "Yes", imprisonment_years: 3, legal_remedy: "Internal Complaints Committee at workplace" },
+            { crime: "Domestic Violence", category: "women", ipc_section: "IPC 498A, DV Act", description: "Physical, emotional, or economic abuse within household.", punishment: "1 to 3 years", fine: "As per court", bailable: "Non-bailable", cognizable: "Yes", imprisonment_years: 3, legal_remedy: "Protection Officer, shelter homes" },
+            { crime: "Dowry Harassment", category: "women", ipc_section: "IPC 498A, Dowry Prohibition Act", description: "Harassment for dowry demand.", punishment: "2 to 7 years", fine: "50,000", bailable: "Non-bailable", cognizable: "Yes", imprisonment_years: 7, legal_remedy: "Women helpline 1091, file complaint" },
+            { crime: "Acid Attack", category: "violent", ipc_section: "IPC 326A, 326B", description: "Throwing or attempting to throw acid.", punishment: "10 years to life", fine: "As per court", bailable: "Non-bailable", cognizable: "Yes", imprisonment_years: 20, legal_remedy: "Immediate medical aid, compensation up to ₹7 lakhs" },
+            { crime: "Assault & Hurt", category: "violent", ipc_section: "IPC 323, 324", description: "Causing physical harm or injury.", punishment: "1 to 3 years", fine: "10,000", bailable: "Bailable", cognizable: "Yes", imprisonment_years: 3, legal_remedy: "File FIR, medical certificate required" },
+            { crime: "Attempt to Murder", category: "violent", ipc_section: "IPC 307", description: "Attempt to cause death.", punishment: "10 years to life", fine: "As per court", bailable: "Non-bailable", cognizable: "Yes", imprisonment_years: 20, legal_remedy: "Immediate police complaint, medical evidence" },
+            { crime: "Theft", category: "theft", ipc_section: "IPC 378, 379", description: "Taking movable property without consent.", punishment: "1 to 3 years", fine: "As per court", bailable: "Bailable", cognizable: "Yes", imprisonment_years: 3, legal_remedy: "File FIR, list stolen items" },
+            { crime: "Burglary / House Trespass", category: "theft", ipc_section: "IPC 454, 456", description: "Entering property with intent to commit offense.", punishment: "2 to 7 years", fine: "As per court", bailable: "Non-bailable", cognizable: "Yes", imprisonment_years: 7, legal_remedy: "Secure scene, file FIR immediately" },
+            { crime: "Robbery", category: "theft", ipc_section: "IPC 390, 392", description: "Theft using force or threat.", punishment: "3 to 10 years", fine: "As per court", bailable: "Non-bailable", cognizable: "Yes", imprisonment_years: 10, legal_remedy: "Describe perpetrators, preserve evidence" },
+            { crime: "Bank Fraud", category: "financial", ipc_section: "IPC 420, Banking Regulation Act", description: "Fraudulent transactions, loan scams.", punishment: "3 to 10 years", fine: "As per court", bailable: "Non-bailable", cognizable: "Yes", imprisonment_years: 10, legal_remedy: "Notify bank immediately, cyber complaint" },
+            { crime: "UPI / Digital Fraud", category: "financial", ipc_section: "IPC 420, IT Act 66", description: "Fraudulent UPI transactions, phishing.", punishment: "3 to 7 years", fine: "10,00,000", bailable: "Non-bailable", cognizable: "Yes", imprisonment_years: 7, legal_remedy: "Call 1930, report to cyber cell" },
+            { crime: "Investment Scam", category: "financial", ipc_section: "IPC 420, SEBI Act", description: "Ponzi schemes, fake investment promises.", punishment: "3 to 10 years", fine: "As per court", bailable: "Non-bailable", cognizable: "Yes", imprisonment_years: 10, legal_remedy: "Complaint to SEBI, Economic Offences Wing" },
+            { crime: "Child Abuse", category: "child", ipc_section: "IPC 375, POCSO Act", description: "Sexual abuse of minor.", punishment: "10 years to life", fine: "As per court", bailable: "Non-bailable", cognizable: "Yes", imprisonment_years: 20, legal_remedy: "Child helpline 1098, special court procedure" },
+            { crime: "Child Trafficking", category: "child", ipc_section: "IPC 370, Juvenile Justice Act", description: "Buying, selling, or exploiting children.", punishment: "7 years to life", fine: "As per court", bailable: "Non-bailable", cognizable: "Yes", imprisonment_years: 20, legal_remedy: "Report to police, child welfare committee" },
+            { crime: "Child Labour", category: "child", ipc_section: "Child Labour (Prohibition) Act", description: "Employing children below 14 years.", punishment: "6 months to 2 years", fine: "50,000", bailable: "Bailable", cognizable: "Yes", imprisonment_years: 2, legal_remedy: "Complaint to Labour Department" }
+        ];
+
+        let allPenalties = penaltiesData;
+
+        function updateNavigation() {
+            const token = localStorage.getItem('token');
+            const navMenu = document.getElementById('nav-menu');
+            if (!navMenu) return;
+            
+            if (token) {
+                navMenu.innerHTML = `
+                    <li><a href="../../index.html">Home</a></li>
+                    <li><a href="../sos.html">SOS</a></li>
+                    <li><a href="../helplines.html">Helplines</a></li>
+                    <li><a href="dashboard.html">Awareness</a></li>
+                    <li><a href="penalties.html" class="active">Penalties</a></li>
+                    <li><a href="../profile.html">Profile</a></li>
+                    <li><a href="#" id="logout-link">Logout</a></li>
+                `;
+                const logoutLink = document.getElementById('logout-link');
+                if (logoutLink) {
+                    logoutLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('user');
+                        showToast('Logged out successfully', 'success');
+                        setTimeout(() => window.location.href = '../../index.html', 1000);
+                    });
+                }
+            } else {
+                navMenu.innerHTML = `
+                    <li><a href="../../index.html">Home</a></li>
+                    <li><a href="../sos.html">SOS</a></li>
+                    <li><a href="../helplines.html">Helplines</a></li>
+                    <li><a href="dashboard.html">Awareness</a></li>
+                    <li><a href="penalties.html" class="active">Penalties</a></li>
+                    <li><a href="../login.html">Login</a></li>
+                    <li><a href="../register.html">Register</a></li>
+                `;
+            }
+        }
+
+        function updateStats() {
+            const totalCrimes = allPenalties.length;
+            const maxImprisonment = Math.max(...allPenalties.map(p => p.imprisonment_years || 0));
+            const maxFine = Math.max(...allPenalties.map(p => parseFloat(p.fine.replace(/,/g, '')) || 0)) / 100000;
+            const uniqueActs = [...new Set(allPenalties.map(p => p.ipc_section.split(',')[0].trim()))].length;
+            
+            animateNumber('total-crimes', totalCrimes);
+            animateNumber('total-imprisonment', maxImprisonment);
+            animateNumber('total-fine', maxFine.toFixed(0));
+            animateNumber('total-acts', uniqueActs);
+        }
+
+        function animateNumber(elementId, target) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            let current = 0;
+            const increment = target / 50;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current);
+                }
+            }, 20);
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function filterPenalties(category) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const filtered = category === 'all' ? allPenalties : allPenalties.filter(p => p.category === category);
+            displayPenalties(filtered);
+            showToast(`Showing ${filtered.length} ${category === 'all' ? 'crimes' : category} penalties`, 'success');
+        }
+
+        function displayPenalties(penalties) {
+            const container = document.getElementById('penalties-grid');
+            
+            if (penalties.length === 0) {
+                container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: #64748b;"><i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem;"></i><p>No penalties found</p></div>`;
+                return;
+            }
+            
+            container.innerHTML = penalties.map((penalty, index) => `
+                <div class="penalty-card" data-category="${penalty.category}" data-aos="fade-up" data-aos-delay="${index * 50}">
+                    <div class="penalty-header">
+                        <h3>
+                            <i class="fas ${penalty.category === 'cyber' ? 'fa-laptop' : penalty.category === 'women' ? 'fa-fist-raised' : penalty.category === 'theft' ? 'fa-hand-holding-usd' : penalty.category === 'violent' ? 'fa-fist-raised' : penalty.category === 'financial' ? 'fa-chart-line' : 'fa-child'}"></i>
+                            ${penalty.crime}
+                            <span class="penalty-badge">${penalty.category.toUpperCase()}</span>
+                        </h3>
+                    </div>
+                    <div class="penalty-body">
+                        <div class="penalty-section"><h4><i class="fas fa-book"></i> IPC / Act</h4><p>${penalty.ipc_section}</p></div>
+                        <div class="penalty-section"><h4><i class="fas fa-info-circle"></i> Description</h4><p>${penalty.description}</p></div>
+                        <div class="punishment-details">
+                            <div class="penalty-section"><h4><i class="fas fa-hourglass-half"></i> Punishment</h4><p class="imprisonment"><i class="fas fa-prison"></i> ${penalty.punishment} imprisonment</p></div>
+                            <div class="penalty-section"><h4><i class="fas fa-rupee-sign"></i> Fine</h4><p class="fine-amount"><i class="fas fa-money-bill-wave"></i> ₹${penalty.fine}</p></div>
+                            <div class="penalty-section"><h4><i class="fas fa-gavel"></i> Legal Status</h4><div style="display: flex; gap: 0.5rem; flex-wrap: wrap;"><span class="bailable-status ${penalty.bailable === 'Non-bailable' ? 'status-non-bailable' : 'status-bailable'}"><i class="fas ${penalty.bailable === 'Non-bailable' ? 'fa-lock' : 'fa-unlock-alt'}"></i> ${penalty.bailable}</span><span class="bailable-status status-cognizable"><i class="fas fa-check-circle"></i> Cognizable: ${penalty.cognizable}</span></div></div>
+                            <div class="penalty-section"><h4><i class="fas fa-hand-holding-heart"></i> Legal Remedy</h4><p style="color: #ccffcc;">${penalty.legal_remedy}</p></div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Hamburger Menu
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('nav-menu');
+        
+        if (hamburger) {
+            hamburger.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+                hamburger.innerHTML = navMenu.classList.contains('active') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+            });
+        }
+
+        AOS.init({ duration: 600, once: true });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateNavigation();
+            displayPenalties(allPenalties);
+            updateStats();
+        });
+    </script>
+</body>
+</html>

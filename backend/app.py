@@ -1,4 +1,3 @@
-from flask_cors import CORS, cross_origin
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
@@ -7,13 +6,15 @@ import os
 from datetime import datetime, timedelta
 import logging
 from logging.handlers import RotatingFileHandler
+import json
+
+load_dotenv()
+
+# Import database modules
 from core.database import db, init_db
 from models.user import User
 from models.emergency_contact import EmergencyContact
 from utils.validators import validate_email, validate_phone, validate_password
-import json
-
-load_dotenv()
 
 def create_app():
     app = Flask(__name__)
@@ -23,23 +24,9 @@ def create_app():
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=1)
     app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
     
-    # 🔥 COMPLETE CORS CONFIGURATION 🔥
-    CORS(app, 
-         resources={r"/api/*": {
-             "origins": [
-                 "http://localhost:5500",
-                 "http://127.0.0.1:5500",
-                 "https://24a31a05kp.github.io",
-                 "https://*.github.io"
-             ],
-             "methods": ["GET", "HEAD", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"],
-             "allow_headers": ["Content-Type", "Authorization", "X-Requested-With"],
-             "expose_headers": ["Content-Type", "Authorization"],
-             "supports_credentials": True,
-             "max_age": 86400,
-             "send_wildcard": False,
-             "always_send": True
-         }})
+    # Initialize extensions
+    CORS(app, origins=['http://localhost:5500', 'http://127.0.0.1:5500'])
+    jwt = JWTManager(app)
     
     # Setup logging
     setup_logging(app)
@@ -54,18 +41,6 @@ def create_app():
     # Register routes
     register_routes(app)
     
-    # 🔥 ADD THIS AFTER ALL ROUTES ARE REGISTERED 🔥
-    @app.after_request
-    def add_cors_headers(response):
-        """Add CORS headers to all responses"""
-        origin = request.headers.get('Origin')
-        if origin and (origin == 'https://24a31a05kp.github.io' or 
-                      origin.endswith('github.io') or 
-                      origin.endswith('localhost:5500')):
-            response.headers['Access-Control-Allow-Origin'] = origin
-            response.headers['Access-Control-Allow-Credentials'] = 'true'
-        return response
-    
     return app
 
 def setup_logging(app):
@@ -73,14 +48,14 @@ def setup_logging(app):
     if not os.path.exists('logs'):
         os.mkdir('logs')
     
-    file_handler = RotatingFileHandler('logs/secureshe.log', maxBytes=10240, backupCount=10)
+    file_handler = RotatingFileHandler('logs/citizenshield.log', maxBytes=10240, backupCount=10)
     file_handler.setFormatter(logging.Formatter(
         '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
     ))
     file_handler.setLevel(logging.INFO)
     app.logger.addHandler(file_handler)
     app.logger.setLevel(logging.INFO)
-    app.logger.info('SecureShe startup')
+    app.logger.info('CitizenShield startup')
 
 def register_error_handlers(app):
     """Register error handlers"""
@@ -104,7 +79,7 @@ def register_routes(app):
     @app.route('/', methods=['GET'])
     def home():
         return jsonify({
-            'name': 'SecureShe API',
+            'name': 'CitizenShield API',
             'version': '2.0.0',
             'status': 'running',
             'endpoints': {
@@ -117,8 +92,9 @@ def register_routes(app):
                 'helplines': '/api/helplines',
                 'sos_trigger': '/api/sos/trigger',
                 'sos_history': '/api/sos/history',
-                'location_share': '/api/location/share',
-                'location_stop': '/api/location/stop-sharing'
+                'admin_stats': '/api/admin/stats',
+                'admin_users': '/api/admin/users',
+                'admin_sos': '/api/admin/sos-alerts'
             }
         })
     
@@ -126,7 +102,8 @@ def register_routes(app):
     def health():
         conn = db.get_connection()
         db_status = 'connected' if conn else 'disconnected'
-        if conn: conn.close()
+        if conn: 
+            conn.close()
         
         return jsonify({
             'status': 'healthy',
@@ -137,22 +114,8 @@ def register_routes(app):
     
     # ============ AUTH ROUTES ============
     
-    @app.route('/api/auth/register', methods=['OPTIONS', 'POST'])
+    @app.route('/api/auth/register', methods=['POST'])
     def register():
-        # Handle preflight OPTIONS request
-        if request.method == 'OPTIONS':
-            print("🔵 OPTIONS request received for /api/auth/register")
-            print(f"🔵 Origin: {request.headers.get('Origin')}")
-            response = jsonify({'status': 'ok'})
-            origin = request.headers.get('Origin')
-            if origin:
-                response.headers['Access-Control-Allow-Origin'] = origin
-                response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
-                response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
-                response.headers['Access-Control-Allow-Credentials'] = 'true'
-                print("🔵 Headers set:", dict(response.headers))
-            return response, 200
-            
         """Register a new user"""
         try:
             data = request.get_json()
@@ -212,7 +175,8 @@ def register_routes(app):
                         'id': result['last_id'],
                         'name': data['name'],
                         'email': data['email'],
-                        'phone': data['phone']
+                        'phone': data['phone'],
+                        'role': 'user'
                     }
                 }), 201
             
@@ -222,19 +186,8 @@ def register_routes(app):
             app.logger.error(f"Registration error: {str(e)}")
             return jsonify({'error': 'Registration failed'}), 500
     
-    @app.route('/api/auth/login', methods=['OPTIONS', 'POST'])
+    @app.route('/api/auth/login', methods=['POST'])
     def login():
-        # Handle preflight OPTIONS request
-        if request.method == 'OPTIONS':
-            response = jsonify({'status': 'ok'})
-            origin = request.headers.get('Origin')
-            if origin:
-                response.headers['Access-Control-Allow-Origin'] = origin
-                response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
-                response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
-                response.headers['Access-Control-Allow-Credentials'] = 'true'
-            return response, 200
-            
         """Login user"""
         try:
             data = request.get_json()
@@ -287,24 +240,12 @@ def register_routes(app):
     
     # ============ PROFILE ROUTES ============
     
-    @app.route('/api/profile', methods=['GET', 'OPTIONS'])
+    @app.route('/api/profile', methods=['GET'])
     @jwt_required()
     def profile():
-        # Handle preflight OPTIONS request
-        if request.method == 'OPTIONS':
-            response = jsonify({'status': 'ok'})
-            origin = request.headers.get('Origin')
-            if origin:
-                response.headers['Access-Control-Allow-Origin'] = origin
-                response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
-                response.headers['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
-                response.headers['Access-Control-Allow-Credentials'] = 'true'
-            return response, 200
-            
         """Get user profile"""
         try:
             user_id = get_jwt_identity()
-            print(f"Fetching profile for user ID: {user_id}")
             
             # Get user details
             users = db.execute_query(
@@ -316,9 +257,8 @@ def register_routes(app):
                 return jsonify({'error': 'User not found'}), 404
             
             user = users[0]
-            print(f"User found: {user}")
             
-            # Get emergency contacts - with error handling
+            # Get emergency contacts
             try:
                 contacts = db.execute_query(
                     """SELECT id, name, phone, email, relationship, is_primary 
@@ -327,9 +267,7 @@ def register_routes(app):
                        ORDER BY is_primary DESC, created_at ASC""",
                     (user_id,)
                 )
-                print(f"Contacts found: {contacts}")
             except Exception as e:
-                print(f"Error fetching contacts: {e}")
                 contacts = []
             
             # Get SOS count
@@ -340,47 +278,28 @@ def register_routes(app):
                 )
                 sos_count_value = sos_count[0]['count'] if sos_count else 0
             except Exception as e:
-                print(f"Error fetching SOS count: {e}")
                 sos_count_value = 0
             
             user['emergency_contacts'] = contacts if contacts else []
             user['sos_count'] = sos_count_value
             
-            print(f"Returning profile data: {user}")
-            
             return jsonify(user), 200
             
         except Exception as e:
-            print(f"Profile error: {str(e)}")
-            import traceback
-            traceback.print_exc()
+            app.logger.error(f"Profile error: {str(e)}")
             return jsonify({'error': str(e)}), 500
     
-    @app.route('/api/profile/update', methods=['PUT', 'OPTIONS'])
+    @app.route('/api/profile/update', methods=['PUT'])
     @jwt_required()
     def update_user_profile():
-        # Handle preflight OPTIONS request
-        if request.method == 'OPTIONS':
-            response = jsonify({'status': 'ok'})
-            origin = request.headers.get('Origin')
-            if origin:
-                response.headers['Access-Control-Allow-Origin'] = origin
-                response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
-                response.headers['Access-Control-Allow-Methods'] = 'PUT, OPTIONS'
-                response.headers['Access-Control-Allow-Credentials'] = 'true'
-            return response, 200
-            
-        """Update user profile (single version)"""
+        """Update user profile"""
         try:
             user_id = get_jwt_identity()
             data = request.get_json()
             
-            print(f"Updating profile for user {user_id} with data: {data}")
-            
             if not data:
                 return jsonify({'error': 'No data provided'}), 400
             
-            # Build update query dynamically
             updates = []
             params = []
             
@@ -389,7 +308,6 @@ def register_routes(app):
                 params.append(data['name'])
             
             if 'phone' in data and data['phone']:
-                # Check if phone already exists for another user
                 existing_phone = db.execute_query(
                     "SELECT id FROM users WHERE phone = %s AND id != %s",
                     (data['phone'], user_id)
@@ -397,81 +315,43 @@ def register_routes(app):
                 if existing_phone:
                     return jsonify({'error': 'Phone number already in use'}), 400
                 
-                # Basic phone validation
                 if not data['phone'].replace('+', '').replace('-', '').replace(' ', '').isdigit():
                     return jsonify({'error': 'Invalid phone number format'}), 400
                 updates.append("phone = %s")
                 params.append(data['phone'])
             
-            if 'email' in data and data['email']:
-                # Check if email already exists for another user
-                existing_email = db.execute_query(
-                    "SELECT id FROM users WHERE email = %s AND id != %s",
-                    (data['email'], user_id)
-                )
-                if existing_email:
-                    return jsonify({'error': 'Email already in use'}), 400
-                
-                # Basic email validation
-                if '@' not in data['email']:
-                    return jsonify({'error': 'Invalid email format'}), 400
-                updates.append("email = %s")
-                params.append(data['email'])
-            
             if not updates:
                 return jsonify({'error': 'No fields to update'}), 400
             
-            # Add user_id to params
             params.append(user_id)
-            
-            # Execute update
             query = f"UPDATE users SET {', '.join(updates)} WHERE id = %s"
             result = db.execute_query(query, tuple(params))
             
-            print(f"Update result: {result}")
-            
             if result and result.get('affected_rows', 0) > 0:
-                # Fetch updated user data
                 updated_user = db.execute_query(
                     "SELECT id, name, email, phone FROM users WHERE id = %s",
                     (user_id,)
                 )
-                
                 return jsonify({
                     'message': 'Profile updated successfully',
                     'user': updated_user[0] if updated_user else None
                 }), 200
             else:
-                return jsonify({'error': 'No changes made or user not found'}), 400
+                return jsonify({'error': 'No changes made'}), 400
                 
         except Exception as e:
-            print(f"Profile update error: {str(e)}")
-            import traceback
-            traceback.print_exc()
+            app.logger.error(f"Profile update error: {str(e)}")
             return jsonify({'error': str(e)}), 500
     
     # ============ EMERGENCY CONTACTS ROUTES ============
     
-    @app.route('/api/profile/contacts', methods=['POST', 'OPTIONS'])
+    @app.route('/api/profile/contacts', methods=['POST'])
     @jwt_required()
     def add_emergency_contact():
-        # Handle preflight OPTIONS request
-        if request.method == 'OPTIONS':
-            response = jsonify({'status': 'ok'})
-            origin = request.headers.get('Origin')
-            if origin:
-                response.headers['Access-Control-Allow-Origin'] = origin
-                response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
-                response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
-                response.headers['Access-Control-Allow-Credentials'] = 'true'
-            return response, 200
-            
         """Add emergency contact"""
         try:
             user_id = get_jwt_identity()
             data = request.get_json()
-            
-            print(f"Adding contact for user {user_id}: {data}")
             
             if not data:
                 return jsonify({'error': 'No data provided'}), 400
@@ -481,12 +361,10 @@ def register_routes(app):
                 if field not in data:
                     return jsonify({'error': f'Missing field: {field}'}), 400
             
-            # Check if this is the first contact - make it primary
             contacts = db.execute_query(
                 "SELECT COUNT(*) as count FROM emergency_contacts WHERE user_id = %s",
                 (user_id,)
             )
-            
             is_primary = contacts and contacts[0]['count'] == 0
             
             result = db.execute_query("""
@@ -494,8 +372,6 @@ def register_routes(app):
                 VALUES (%s, %s, %s, %s, %s, %s)
             """, (user_id, data['name'], data['phone'], data.get('email'), 
                   data.get('relationship'), is_primary))
-            
-            print(f"Insert result: {result}")
             
             if result and result.get('last_id'):
                 return jsonify({
@@ -507,30 +383,16 @@ def register_routes(app):
                 return jsonify({'error': 'Failed to add contact'}), 500
                 
         except Exception as e:
-            print(f"Add contact error: {str(e)}")
-            import traceback
-            traceback.print_exc()
+            app.logger.error(f"Add contact error: {str(e)}")
             return jsonify({'error': str(e)}), 500
     
-    @app.route('/api/profile/contacts/<int:contact_id>', methods=['DELETE', 'OPTIONS'])
+    @app.route('/api/profile/contacts/<int:contact_id>', methods=['DELETE'])
     @jwt_required()
     def delete_emergency_contact(contact_id):
-        # Handle preflight OPTIONS request
-        if request.method == 'OPTIONS':
-            response = jsonify({'status': 'ok'})
-            origin = request.headers.get('Origin')
-            if origin:
-                response.headers['Access-Control-Allow-Origin'] = origin
-                response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
-                response.headers['Access-Control-Allow-Methods'] = 'DELETE, OPTIONS'
-                response.headers['Access-Control-Allow-Credentials'] = 'true'
-            return response, 200
-            
         """Delete emergency contact"""
         try:
             user_id = get_jwt_identity()
             
-            # Check if contact exists and belongs to user
             contact = db.execute_query(
                 "SELECT id, is_primary FROM emergency_contacts WHERE id = %s AND user_id = %s",
                 (contact_id, user_id)
@@ -539,13 +401,11 @@ def register_routes(app):
             if not contact:
                 return jsonify({'error': 'Contact not found'}), 404
             
-            # Delete contact
             result = db.execute_query(
                 "DELETE FROM emergency_contacts WHERE id = %s AND user_id = %s",
                 (contact_id, user_id)
             )
             
-            # If we deleted a primary contact, make another contact primary
             if contact[0]['is_primary']:
                 db.execute_query("""
                     UPDATE emergency_contacts 
@@ -560,31 +420,18 @@ def register_routes(app):
             app.logger.error(f"Delete contact error: {str(e)}")
             return jsonify({'error': 'Failed to delete contact'}), 500
     
-    @app.route('/api/profile/contacts/<int:contact_id>/primary', methods=['PUT', 'OPTIONS'])
+    @app.route('/api/profile/contacts/<int:contact_id>/primary', methods=['PUT'])
     @jwt_required()
     def set_primary_contact(contact_id):
-        # Handle preflight OPTIONS request
-        if request.method == 'OPTIONS':
-            response = jsonify({'status': 'ok'})
-            origin = request.headers.get('Origin')
-            if origin:
-                response.headers['Access-Control-Allow-Origin'] = origin
-                response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
-                response.headers['Access-Control-Allow-Methods'] = 'PUT, OPTIONS'
-                response.headers['Access-Control-Allow-Credentials'] = 'true'
-            return response, 200
-            
         """Set a contact as primary"""
         try:
             user_id = get_jwt_identity()
             
-            # Remove primary from all contacts
             db.execute_query(
                 "UPDATE emergency_contacts SET is_primary = FALSE WHERE user_id = %s",
                 (user_id,)
             )
             
-            # Set new primary
             result = db.execute_query(
                 "UPDATE emergency_contacts SET is_primary = TRUE WHERE id = %s AND user_id = %s",
                 (contact_id, user_id)
@@ -601,61 +448,28 @@ def register_routes(app):
     
     # ============ HELPLINE ROUTES ============
     
-    @app.route('/api/helplines', methods=['GET', 'OPTIONS'])
+    @app.route('/api/helplines', methods=['GET'])
     def get_helplines():
-        # Handle preflight OPTIONS request
-        if request.method == 'OPTIONS':
-            response = jsonify({'status': 'ok'})
-            origin = request.headers.get('Origin')
-            if origin:
-                response.headers['Access-Control-Allow-Origin'] = origin
-                response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
-                response.headers['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
-                response.headers['Access-Control-Allow-Credentials'] = 'true'
-            return response, 200
-            
         """Get all helplines"""
         try:
-            country = request.args.get('country')
-            
-            if country:
-                result = db.execute_query(
-                    "SELECT * FROM helplines WHERE country = %s AND is_active = TRUE ORDER BY service_name",
-                    (country,)
-                )
-            else:
-                result = db.execute_query(
-                    "SELECT * FROM helplines WHERE is_active = TRUE ORDER BY country, service_name"
-                )
-            
+            result = db.execute_query(
+                "SELECT * FROM helplines WHERE is_active = TRUE ORDER BY country, service_name"
+            )
             return jsonify(result or [])
-            
         except Exception as e:
             app.logger.error(f"Helplines error: {str(e)}")
-            return jsonify([])  # Return empty array on error
+            return jsonify([])
     
     # ============ SOS ROUTES ============
     
-    @app.route('/api/sos/trigger', methods=['POST', 'OPTIONS'])
+    @app.route('/api/sos/trigger', methods=['POST'])
     @jwt_required()
     def trigger_sos():
-        # Handle preflight OPTIONS request
-        if request.method == 'OPTIONS':
-            response = jsonify({'status': 'ok'})
-            origin = request.headers.get('Origin')
-            if origin:
-                response.headers['Access-Control-Allow-Origin'] = origin
-                response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
-                response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
-                response.headers['Access-Control-Allow-Credentials'] = 'true'
-            return response, 200
-            
         """Trigger SOS alert"""
         try:
             user_id = get_jwt_identity()
             data = request.get_json()
             
-            # Get user details
             users = db.execute_query(
                 "SELECT name, phone FROM users WHERE id = %s",
                 (user_id,)
@@ -664,13 +478,11 @@ def register_routes(app):
             if not users:
                 return jsonify({'error': 'User not found'}), 404
             
-            # Get emergency contacts
             contacts = db.execute_query(
                 "SELECT name, phone FROM emergency_contacts WHERE user_id = %s",
                 (user_id,)
             )
             
-            # Insert SOS alert
             result = db.execute_query("""
                 INSERT INTO sos_alerts (user_id, latitude, longitude, address, message, status, created_at)
                 VALUES (%s, %s, %s, %s, %s, 'active', NOW())
@@ -682,7 +494,6 @@ def register_routes(app):
                 data.get('message', 'SOS Emergency! I need help.')
             ))
             
-            # Log SOS event
             app.logger.info(f"SOS triggered for user {user_id}")
             
             return jsonify({
@@ -696,20 +507,9 @@ def register_routes(app):
             app.logger.error(f"SOS trigger error: {str(e)}")
             return jsonify({'error': 'Failed to trigger SOS'}), 500
     
-    @app.route('/api/sos/history', methods=['GET', 'OPTIONS'])
+    @app.route('/api/sos/history', methods=['GET'])
     @jwt_required()
     def get_sos_history():
-        # Handle preflight OPTIONS request
-        if request.method == 'OPTIONS':
-            response = jsonify({'status': 'ok'})
-            origin = request.headers.get('Origin')
-            if origin:
-                response.headers['Access-Control-Allow-Origin'] = origin
-                response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
-                response.headers['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
-                response.headers['Access-Control-Allow-Credentials'] = 'true'
-            return response, 200
-            
         """Get user's SOS history"""
         try:
             user_id = get_jwt_identity()
@@ -729,137 +529,156 @@ def register_routes(app):
             app.logger.error(f"SOS history error: {str(e)}")
             return jsonify([])
     
-    # ============ LOCATION SHARING ROUTES ============
+    # ============ ADMIN ROUTES ============
     
-    @app.route('/api/location/share', methods=['POST', 'OPTIONS'])
+    @app.route('/api/admin/stats', methods=['GET'])
     @jwt_required()
-    def share_location():
-        # Handle preflight OPTIONS request
-        if request.method == 'OPTIONS':
-            response = jsonify({'status': 'ok'})
-            origin = request.headers.get('Origin')
-            if origin:
-                response.headers['Access-Control-Allow-Origin'] = origin
-                response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
-                response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
-                response.headers['Access-Control-Allow-Credentials'] = 'true'
-            return response, 200
-            
-        """Share live location"""
+    def admin_stats():
+        """Get admin dashboard statistics"""
         try:
             user_id = get_jwt_identity()
-            data = request.get_json()
+            user = db.execute_query("SELECT role FROM users WHERE id = %s", (user_id,))
+            if not user or user[0]['role'] != 'admin':
+                return jsonify({'error': 'Admin access required'}), 403
             
-            # First, deactivate any previous active shares
-            db.execute_query("""
-                UPDATE location_shares 
-                SET is_active = FALSE, ended_at = NOW() 
-                WHERE user_id = %s AND is_active = TRUE
-            """, (user_id,))
-            
-            # Store new location in database
-            result = db.execute_query("""
-                INSERT INTO location_shares (user_id, latitude, longitude, accuracy, mode, recipients, is_active)
-                VALUES (%s, %s, %s, %s, %s, %s, TRUE)
-            """, (
-                user_id, 
-                data.get('latitude'), 
-                data.get('longitude'), 
-                data.get('accuracy', 0),
-                data.get('mode', 'live'),
-                json.dumps(data.get('recipients', 'all'))
-            ))
+            total_users = db.execute_query("SELECT COUNT(*) as count FROM users")[0]['count']
+            total_sos = db.execute_query("SELECT COUNT(*) as count FROM sos_alerts")[0]['count']
+            total_contacts = db.execute_query("SELECT COUNT(*) as count FROM emergency_contacts")[0]['count']
+            total_admins = db.execute_query("SELECT COUNT(*) as count FROM users WHERE role = 'admin'")[0]['count']
             
             return jsonify({
-                'message': 'Location shared successfully',
-                'share_id': result.get('last_id') if result else None
+                'total_users': total_users,
+                'total_sos': total_sos,
+                'total_contacts': total_contacts,
+                'total_admins': total_admins
             }), 200
         
         except Exception as e:
-            app.logger.error(f"Location share error: {str(e)}")
             return jsonify({'error': str(e)}), 500
-
-    @app.route('/api/location/stop-sharing', methods=['POST', 'OPTIONS'])
+    
+    @app.route('/api/admin/users', methods=['GET'])
     @jwt_required()
-    def stop_sharing():
-        # Handle preflight OPTIONS request
-        if request.method == 'OPTIONS':
-            response = jsonify({'status': 'ok'})
-            origin = request.headers.get('Origin')
-            if origin:
-                response.headers['Access-Control-Allow-Origin'] = origin
-                response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
-                response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
-                response.headers['Access-Control-Allow-Credentials'] = 'true'
-            return response, 200
-            
-        """Stop sharing location"""
+    def admin_users():
+        """Get all users"""
         try:
             user_id = get_jwt_identity()
+            user = db.execute_query("SELECT role FROM users WHERE id = %s", (user_id,))
+            if not user or user[0]['role'] != 'admin':
+                return jsonify({'error': 'Admin access required'}), 403
             
-            db.execute_query("""
-                UPDATE location_shares 
-                SET is_active = FALSE, ended_at = NOW() 
-                WHERE user_id = %s AND is_active = TRUE
-            """, (user_id,))
+            users = db.execute_query("""
+                SELECT id, name, email, phone, role, created_at 
+                FROM users ORDER BY created_at DESC
+            """)
             
-            return jsonify({'message': 'Location sharing stopped'}), 200
+            return jsonify(users), 200
         
         except Exception as e:
-            app.logger.error(f"Stop sharing error: {str(e)}")
             return jsonify({'error': str(e)}), 500
-
-    @app.route('/api/location/contacts/<int:contact_id>', methods=['GET', 'OPTIONS'])
+    
+    @app.route('/api/admin/users/<int:user_id>', methods=['GET'])
     @jwt_required()
-    def get_contact_location(contact_id):
-        # Handle preflight OPTIONS request
-        if request.method == 'OPTIONS':
-            response = jsonify({'status': 'ok'})
-            origin = request.headers.get('Origin')
-            if origin:
-                response.headers['Access-Control-Allow-Origin'] = origin
-                response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
-                response.headers['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
-                response.headers['Access-Control-Allow-Credentials'] = 'true'
-            return response, 200
+    def admin_get_user(user_id):
+        """Get user by ID"""
+        try:
+            admin_id = get_jwt_identity()
+            admin = db.execute_query("SELECT role FROM users WHERE id = %s", (admin_id,))
+            if not admin or admin[0]['role'] != 'admin':
+                return jsonify({'error': 'Admin access required'}), 403
             
-        """Get live location of a contact (for trusted contacts)"""
+            user = db.execute_query("SELECT id, name, email, phone, role FROM users WHERE id = %s", (user_id,))
+            if not user:
+                return jsonify({'error': 'User not found'}), 404
+            
+            return jsonify(user[0]), 200
+        
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    
+    @app.route('/api/admin/users/<int:user_id>', methods=['PUT'])
+    @jwt_required()
+    def admin_update_user(user_id):
+        """Update user by admin"""
+        try:
+            admin_id = get_jwt_identity()
+            admin = db.execute_query("SELECT role FROM users WHERE id = %s", (admin_id,))
+            if not admin or admin[0]['role'] != 'admin':
+                return jsonify({'error': 'Admin access required'}), 403
+            
+            data = request.get_json()
+            updates = []
+            params = []
+            
+            if 'name' in data:
+                updates.append("name = %s")
+                params.append(data['name'])
+            if 'email' in data:
+                updates.append("email = %s")
+                params.append(data['email'])
+            if 'phone' in data:
+                updates.append("phone = %s")
+                params.append(data['phone'])
+            if 'role' in data:
+                updates.append("role = %s")
+                params.append(data['role'])
+            
+            if updates:
+                params.append(user_id)
+                query = f"UPDATE users SET {', '.join(updates)} WHERE id = %s"
+                db.execute_query(query, tuple(params))
+            
+            return jsonify({'message': 'User updated successfully'}), 200
+        
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    
+    @app.route('/api/admin/users/<int:user_id>', methods=['DELETE'])
+    @jwt_required()
+    def admin_delete_user(user_id):
+        """Delete user by admin"""
+        try:
+            admin_id = get_jwt_identity()
+            admin = db.execute_query("SELECT role FROM users WHERE id = %s", (admin_id,))
+            if not admin or admin[0]['role'] != 'admin':
+                return jsonify({'error': 'Admin access required'}), 403
+            
+            db.execute_query("DELETE FROM users WHERE id = %s", (user_id,))
+            return jsonify({'message': 'User deleted successfully'}), 200
+        
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    
+    @app.route('/api/admin/sos-alerts', methods=['GET'])
+    @jwt_required()
+    def admin_sos_alerts():
+        """Get all SOS alerts"""
         try:
             user_id = get_jwt_identity()
+            user = db.execute_query("SELECT role FROM users WHERE id = %s", (user_id,))
+            if not user or user[0]['role'] != 'admin':
+                return jsonify({'error': 'Admin access required'}), 403
             
-            # Check if contact belongs to user
-            contact = db.execute_query(
-                "SELECT * FROM emergency_contacts WHERE id = %s AND user_id = %s",
-                (contact_id, user_id)
-            )
+            alerts = db.execute_query("""
+                SELECT s.*, u.name as user_name 
+                FROM sos_alerts s
+                LEFT JOIN users u ON s.user_id = u.id
+                ORDER BY s.created_at DESC
+                LIMIT 100
+            """)
             
-            if not contact:
-                return jsonify({'error': 'Contact not found'}), 404
-            
-            # Get contact's live location (if they're sharing)
-            location = db.execute_query("""
-                SELECT ls.*, u.name 
-                FROM location_shares ls
-                JOIN users u ON ls.user_id = u.id
-                WHERE ls.user_id = %s AND ls.is_active = TRUE
-                ORDER BY ls.created_at DESC
-                LIMIT 1
-            """, (contact_id,))
-            
-            return jsonify(location[0] if location else None), 200
+            return jsonify(alerts), 200
         
         except Exception as e:
-            app.logger.error(f"Get contact location error: {str(e)}")
             return jsonify({'error': str(e)}), 500
-
+    
 if __name__ == '__main__':
     app = create_app()
     port = int(os.getenv('PORT', 5000))
     print("\n" + "="*60)
-    print("🚀 SecureShe API Server v2.0")
+    print("🚀 CitizenShield API Server v2.0")
     print("="*60)
     print(f"📍 Server: http://localhost:{port}")
     print(f"📍 Health: http://localhost:{port}/api/health")
-    print(f"📍 Logs: ./logs/secureshe.log")
+    print(f"📍 Logs: ./logs/citizenshield.log")
     print("="*60 + "\n")
     app.run(host='0.0.0.0', port=port, debug=True)

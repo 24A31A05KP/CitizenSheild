@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Safety Assistant - CitizenShield</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+        }
+
+        /* Floating Chatbot Button */
+        .chatbot-float-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 65px;
+            height: 65px;
+            background: linear-gradient(135deg, #dc2626, #f97316);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(220,38,38,0.4);
+            transition: all 0.3s;
+            z-index: 1000;
+            animation: pulse 2s infinite;
+        }
+
+        .chatbot-float-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(249,115,22,0.5);
+        }
+
+        .chatbot-float-btn i {
+            font-size: 2rem;
+            color: white;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Chat Window */
+        .chat-window {
+            position: fixed;
+            bottom: 110px;
+            right: 30px;
+            width: 380px;
+            height: 550px;
+            background: rgba(30, 41, 59, 0.98);
+            backdrop-filter: blur(15px);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 1001;
+            border: 1px solid rgba(249,115,22,0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        .chat-window.open {
+            display: flex;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Chat Header */
+        .chat-header {
+            background: linear-gradient(135deg, #dc2626, #f97316);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h3 {
+            color: white;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chat-header i {
+            font-size: 1.2rem;
+        }
+
+        .close-chat {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .close-chat:hover {
+            transform: scale(1.1);
+        }
+
+        /* Chat Messages */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #f97316;
+            border-radius: 10px;
+        }
+
+        .message {
+            display: flex;
+            gap: 0.8rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.bot .message-bubble {
+            background: rgba(249,115,22,0.15);
+            border-left: 3px solid #f97316;
+        }
+
+        .message.user .message-bubble {
+            background: rgba(59,130,246,0.15);
+            border-right: 3px solid #3b82f6;
+        }
+
+        .message-bubble {
+            max-width: 80%;
+            padding: 0.8rem 1rem;
+            border-radius: 16px;
+            color: #cbd5e1;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        /* Chat Input */
+        .chat-input-container {
+            padding: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .chat-input-container input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 30px;
+            color: white;
+            font-size: 0.85rem;
+        }
+
+        .chat-input-container input:focus {
+            outline: none;
+            border-color: #f97316;
+        }
+
+        .chat-input-container button {
+            padding: 0.8rem 1.2rem;
+            background: linear-gradient(135deg, #dc2626, #f97316);
+            border: none;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .chat-input-container button:hover {
+            transform: scale(1.02);
+        }
+
+        /* Voice Button in Chat */
+        .voice-chat-btn {
+            background: none;
+            border: none;
+            color: #f97316;
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .voice-chat-btn:hover {
+            color: #dc2626;
+            transform: scale(1.1);
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            padding: 0.5rem 1rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .quick-action {
+            background: rgba(255,255,255,0.05);
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            color: #94a3b8;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quick-action:hover {
+            background: #f97316;
+            color: white;
+        }
+
+        /* Status Indicator */
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <!-- The page content will be displayed here -->
+    <!-- This is just the chatbot component - the actual page content will be loaded separately -->
+    
+    <!-- Floating Chatbot Button -->
+    <div class="chatbot-float-btn" id="chatbot-btn">
+        <i class="fas fa-robot"></i>
+    </div>
+
+    <!-- Chat Window -->
+    <div class="chat-window" id="chat-window">
+        <div class="chat-header">
+            <h3><i class="fas fa-robot"></i> Safety Assistant</h3>
+            <button class="close-chat" id="close-chat">✕</button>
+        </div>
+        
+        <div class="chat-messages" id="chat-messages">
+            <div class="message bot">
+                <div class="message-bubble">
+                    👋 Hi! I'm your safety assistant. I can help you with:
+                    <br>• Emergency helplines
+                    <br>• Crime punishments
+                    <br>• Safety tips
+                    <br>• Legal procedures
+                    <br><br>How can I help you today?
+                </div>
+            </div>
+        </div>
+        
+        <div class="quick-actions">
+            <button class="quick-action" onclick="sendQuickAction('Police number')">🚔 Police</button>
+            <button class="quick-action" onclick="sendQuickAction('Women helpline')">👩 Women</button>
+            <button class="quick-action" onclick="sendQuickAction('Ambulance')">🚑 Ambulance</button>
+            <button class="quick-action" onclick="sendQuickAction('Cyber crime')">💻 Cyber Crime</button>
+            <button class="quick-action" onclick="sendQuickAction('Theft punishment')">⚖️ Theft</button>
+            <button class="quick-action" onclick="sendQuickAction('Safety tips')">🛡️ Tips</button>
+        </div>
+        
+        <div class="chat-input-container">
+            <button class="voice-chat-btn" id="voice-chat-btn"><i class="fas fa-microphone"></i></button>
+            <input type="text" id="chat-input" placeholder="Type your question...">
+            <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // Chatbot Responses
+        const chatbotResponses = {
+            sos: "🚨 To trigger SOS, click the red SOS button on the homepage. Your location will be shared with emergency contacts.",
+            police: "📞 Police Helpline: 100. Available 24/7 for immediate assistance.",
+            women: "👩 Women Helpline: 1091. 24x7 assistance for women in distress.",
+            ambulance: "🚑 Ambulance: 102. For medical emergencies, call immediately.",
+            cyber: "💻 Cyber Crime Helpline: 1930. Report online fraud and cyber crimes.",
+            child: "👶 Child Helpline: 1098. For child protection and assistance.",
+            theft: "⚖️ Theft under IPC 379: 1 to 3 years imprisonment + fine.",
+            rape: "⚖️ Rape under IPC 376: 10 years to life imprisonment + fine.",
+            domestic: "⚖️ Domestic violence under IPC 498A: 1 to 3 years imprisonment.",
+            cyberPunishment: "⚖️ Cyber fraud: 3 to 7 years imprisonment + up to ₹10 lakh fine.",
+            fir: "📋 To file FIR: 1) Visit nearest police station, 2) Write complaint, 3) Get free copy. Women can file Zero FIR anywhere.",
+            help: "🛡️ I can help with:\n• Emergency numbers\n• Crime punishments\n• Safety tips\n• Legal procedures\n• How to file complaints",
+            safety: "🛡️ Safety Tips:\n1. Share location with trusted contacts\n2. Never share OTP\n3. Enable 2FA\n4. Trust your instincts\n5. Save emergency numbers"
+        };
+
+        function getBotResponse(userMessage) {
+            const lowerMsg = userMessage.toLowerCase();
+            
+            if (lowerMsg.includes('sos') || lowerMsg.includes('emergency')) return chatbotResponses.sos;
+            if (lowerMsg.includes('police') || lowerMsg.includes('100')) return chatbotResponses.police;
+            if (lowerMsg.includes('women') || lowerMsg.includes('1091')) return chatbotResponses.women;
+            if (lowerMsg.includes('ambulance') || lowerMsg.includes('102')) return chatbotResponses.ambulance;
+            if (lowerMsg.includes('cyber') || lowerMsg.includes('1930')) return chatbotResponses.cyber;
+            if (lowerMsg.includes('child') || lowerMsg.includes('1098')) return chatbotResponses.child;
+            if (lowerMsg.includes('theft')) return chatbotResponses.theft;
+            if (lowerMsg.includes('rape')) return chatbotResponses.rape;
+            if (lowerMsg.includes('domestic')) return chatbotResponses.domestic;
+            if (lowerMsg.includes('fraud') || lowerMsg.includes('phishing')) return chatbotResponses.cyberPunishment;
+            if (lowerMsg.includes('fir') || lowerMsg.includes('file')) return chatbotResponses.fir;
+            if (lowerMsg.includes('help')) return chatbotResponses.help;
+            if (lowerMsg.includes('tip') || lowerMsg.includes('safety')) return chatbotResponses.safety;
+            
+            return "I'm here to help! You can ask me about emergency numbers (Police: 100, Women: 1091, Ambulance: 102), crime punishments, or safety tips. What would you like to know?";
+        }
+
+        // DOM Elements
+        const chatbotBtn = document.getElementById('chatbot-btn');
+        const chatWindow = document.getElementById('chat-window');
+        const closeChat = document.getElementById('close-chat');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const sendBtn = document.getElementById('send-btn');
+        const voiceChatBtn = document.getElementById('voice-chat-btn');
+
+        // Open/Close Chat
+        chatbotBtn.addEventListener('click', () => {
+            chatWindow.classList.add('open');
+        });
+
+        closeChat.addEventListener('click', () => {
+            chatWindow.classList.remove('open');
+        });
+
+        // Add Message
+        function addMessage(message, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            messageDiv.innerHTML = `<div class="message-bubble">${message.replace(/\n/g, '<br>')}</div>`;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Send Message
+        function sendMessage() {
+            const userMessage = chatInput.value.trim();
+            if (!userMessage) return;
+            
+            addMessage(userMessage, true);
+            chatInput.value = '';
+            
+            setTimeout(() => {
+                const response = getBotResponse(userMessage);
+                addMessage(response, false);
+            }, 500);
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        // Quick Action
+        function sendQuickAction(action) {
+            addMessage(action, true);
+            setTimeout(() => {
+                const response = getBotResponse(action);
+                addMessage(response, false);
+            }, 500);
+        }
+        window.sendQuickAction = sendQuickAction;
+
+        // Voice Recognition
+        let recognition = null;
+
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.lang = 'en-IN';
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
+            recognition.onstart = () => {
+                voiceChatBtn.innerHTML = '<i class="fas fa-microphone-slash"></i>';
+                voiceChatBtn.style.color = '#10b981';
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                addMessage(transcript, true);
+                
+                setTimeout(() => {
+                    const response = getBotResponse(transcript);
+                    addMessage(response, false);
+                }, 500);
+            };
+
+            recognition.onerror = () => {
+                voiceChatBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+                voiceChatBtn.style.color = '#f97316';
+            };
+
+            recognition.onend = () => {
+                voiceChatBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+                voiceChatBtn.style.color = '#f97316';
+            };
+        }
+
+        voiceChatBtn.addEventListener('click', () => {
+            if (recognition) {
+                recognition.start();
+            } else {
+                addMessage("❌ Voice recognition not supported in your browser. Please type your question.", false);
+            }
+        });
+
+        // Close chat on outside click (optional)
+        document.addEventListener('click', (e) => {
+            if (!chatWindow.contains(e.target) && !chatbotBtn.contains(e.target) && chatWindow.classList.contains('open')) {
+                chatWindow.classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>

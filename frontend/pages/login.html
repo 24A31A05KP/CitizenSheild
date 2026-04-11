@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - CitizenShield</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #ffffff;
+            color: #1e293b;
+            overflow-x: hidden;
+        }
+
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f97316 0%, #dc2626 50%, #f97316 100%);
+            position: relative;
+            overflow: hidden;
+            padding: 2rem;
+        }
+
+        .auth-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+        }
+
+        .auth-bg::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.05) 50%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .auth-card {
+            position: relative;
+            z-index: 10;
+            max-width: 450px;
+            width: 100%;
+            background: white;
+            border-radius: 32px;
+            padding: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #dc2626, #f97316);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            box-shadow: 0 10px 25px rgba(220,38,38,0.3);
+        }
+
+        .auth-logo-icon i { font-size: 2rem; color: white; }
+        .auth-logo h1 { font-size: 1.8rem; font-weight: 800; background: linear-gradient(135deg, #dc2626, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem; }
+        .auth-logo p { color: #64748b; font-size: 0.9rem; }
+
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #334155; }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .input-wrapper .input-icon {
+            position: absolute;
+            left: 1rem;
+            color: #94a3b8;
+            font-size: 1.1rem;
+            pointer-events: none;
+        }
+        
+        .input-wrapper input {
+            width: 100%;
+            padding: 0.9rem 2.8rem 0.9rem 2.8rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: white;
+        }
+        
+        .input-wrapper input:focus {
+            outline: none;
+            border-color: #f97316;
+            box-shadow: 0 0 0 3px rgba(249,115,22,0.1);
+        }
+        
+        .input-wrapper input:focus + .input-icon {
+            color: #f97316;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 1rem;
+            cursor: pointer;
+            color: #94a3b8;
+            z-index: 2;
+            font-size: 1.1rem;
+        }
+        
+        .password-toggle:hover {
+            color: #f97316;
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+        
+        .checkbox input {
+            width: 18px;
+            height: 18px;
+            accent-color: #f97316;
+        }
+        
+        .checkbox span {
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+        
+        .forgot-link {
+            font-size: 0.9rem;
+            color: #f97316;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .forgot-link:hover {
+            color: #dc2626;
+            text-decoration: underline;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 0.9rem;
+            background: linear-gradient(135deg, #dc2626, #f97316);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .login-btn:hover::before {
+            left: 100%;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(220,38,38,0.3);
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .register-link p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        
+        .register-link a {
+            color: #f97316;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .register-link a:hover {
+            color: #dc2626;
+        }
+
+        /* Message Box Styles */
+        .message-box {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message-box.error {
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+            display: block;
+        }
+        
+        .message-box.success {
+            background: #dcfce7;
+            color: #10b981;
+            border: 1px solid #bbf7d0;
+            display: block;
+        }
+        
+        .message-box.info {
+            background: #fef3c7;
+            color: #f59e0b;
+            border: 1px solid #fde68a;
+            display: block;
+        }
+
+        /* Forgot Password Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            animation: modalFadeIn 0.3s ease;
+        }
+        
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .modal-content h3 {
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+        
+        .modal-content p {
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-content .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-content input {
+            width: 100%;
+            padding: 0.9rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            font-size: 1rem;
+        }
+        
+        .modal-content input:focus {
+            outline: none;
+            border-color: #f97316;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .modal-btn-primary {
+            flex: 1;
+            padding: 0.8rem;
+            background: linear-gradient(135deg, #dc2626, #f97316);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .modal-btn-secondary {
+            flex: 1;
+            padding: 0.8rem;
+            background: #f1f5f9;
+            color: #64748b;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .close-modal {
+            float: right;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #94a3b8;
+            transition: color 0.3s;
+        }
+        
+        .close-modal:hover {
+            color: #dc2626;
+        }
+
+        .login-btn.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        
+        .login-btn.loading i {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+            .auth-card {
+                padding: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-bg"></div>
+        <div class="auth-card">
+            <div class="auth-logo">
+                <div class="auth-logo-icon"><i class="fas fa-shield-alt"></i></div>
+                <h1>Welcome Back</h1>
+                <p>Login to your CitizenShield account</p>
+            </div>
+
+            <form id="login-form">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input type="email" id="email" placeholder="Enter your email" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="password" placeholder="Enter your password" required>
+                        <i class="fas fa-eye-slash password-toggle" id="togglePassword"></i>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="checkbox">
+                        <input type="checkbox" id="remember-me">
+                        <span>Remember me</span>
+                    </label>
+                    <a class="forgot-link" id="forgot-password-link">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="login-btn" id="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+
+                <div id="message-box" class="message-box"></div>
+            </form>
+
+            <div class="register-link">
+                <p>Don't have an account? <a href="register.html">Create Account</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgot-password-modal" class="modal">
+        <div class="modal-content">
+            <div style="text-align: right;">
+                <span class="close-modal" id="close-modal">&times;</span>
+            </div>
+            <i class="fas fa-key" style="font-size: 3rem; color: #f97316; margin-bottom: 1rem;"></i>
+            <h3>Reset Password</h3>
+            <p>Enter your email address and we'll send you a link to reset your password.</p>
+            <div class="form-group">
+                <input type="email" id="reset-email" placeholder="Enter your registered email" required>
+            </div>
+            <div class="modal-actions">
+                <button id="send-reset-link" class="modal-btn-primary">Send Reset Link</button>
+                <button id="cancel-reset" class="modal-btn-secondary">Cancel</button>
+            </div>
+            <div id="reset-message" class="message-box" style="margin-top: 1rem;"></div>
+        </div>
+    </div>
+
+    <script>
+        // API Configuration
+        const API_BASE_URL = 'http://localhost:5000/api';
+
+        // DOM Elements
+        const loginForm = document.getElementById('login-form');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const loginBtn = document.getElementById('login-btn');
+        const messageBox = document.getElementById('message-box');
+        const rememberCheckbox = document.getElementById('remember-me');
+        const togglePassword = document.getElementById('togglePassword');
+        const forgotPasswordLink = document.getElementById('forgot-password-link');
+        const forgotModal = document.getElementById('forgot-password-modal');
+        const closeModal = document.getElementById('close-modal');
+        const cancelReset = document.getElementById('cancel-reset');
+        const sendResetLink = document.getElementById('send-reset-link');
+        const resetEmail = document.getElementById('reset-email');
+        const resetMessage = document.getElementById('reset-message');
+
+        // Toggle Password Visibility
+        if (togglePassword) {
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                this.classList.toggle('fa-eye');
+                this.classList.toggle('fa-eye-slash');
+            });
+        }
+
+        // Open Forgot Password Modal
+        if (forgotPasswordLink) {
+            forgotPasswordLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                forgotModal.classList.add('show');
+                resetEmail.value = '';
+                resetMessage.style.display = 'none';
+            });
+        }
+
+        // Close Modal
+        function closeForgotModal() {
+            forgotModal.classList.remove('show');
+            resetMessage.style.display = 'none';
+            resetMessage.className = 'message-box';
+        }
+
+        if (closeModal) closeModal.addEventListener('click', closeForgotModal);
+        if (cancelReset) cancelReset.addEventListener('click', closeForgotModal);
+
+        // Close modal on outside click
+        window.addEventListener('click', (e) => {
+            if (e.target === forgotModal) {
+                closeForgotModal();
+            }
+        });
+
+        // Show message function
+        function showMessage(message, type = 'error', targetBox = messageBox) {
+            targetBox.textContent = message;
+            targetBox.className = `message-box ${type}`;
+            targetBox.style.display = 'block';
+            
+            setTimeout(() => {
+                targetBox.style.display = 'none';
+                targetBox.className = 'message-box';
+            }, 5000);
+        }
+
+        // Send Reset Link
+        if (sendResetLink) {
+            sendResetLink.addEventListener('click', async () => {
+                const email = resetEmail.value.trim();
+                
+                if (!email) {
+                    showMessage('❌ Please enter your email address', 'error', resetMessage);
+                    return;
+                }
+                
+                if (!/^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(email)) {
+                    showMessage('❌ Please enter a valid email address', 'error', resetMessage);
+                    return;
+                }
+                
+                sendResetLink.disabled = true;
+                sendResetLink.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                
+                try {
+                    const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        showMessage('✅ Password reset link sent to your email! Please check your inbox.', 'success', resetMessage);
+                        setTimeout(() => {
+                            closeForgotModal();
+                        }, 3000);
+                    } else {
+                        showMessage(`❌ ${data.error || 'Email not found. Please register first.'}`, 'error', resetMessage);
+                    }
+                } catch (error) {
+                    console.error('Reset password error:', error);
+                    showMessage('❌ Connection error. Please try again later.', 'error', resetMessage);
+                } finally {
+                    sendResetLink.disabled = false;
+                    sendResetLink.innerHTML = 'Send Reset Link';
+                }
+            });
+        }
+
+        // Load saved email
+        function loadSavedEmail() {
+            const savedEmail = localStorage.getItem('remembered_email');
+            if (savedEmail) {
+                emailInput.value = savedEmail;
+                rememberCheckbox.checked = true;
+            }
+        }
+
+        // Save email
+        function saveEmail(email) {
+            if (rememberCheckbox.checked) {
+                localStorage.setItem('remembered_email', email);
+            } else {
+                localStorage.removeItem('remembered_email');
+            }
+        }
+
+        // Set loading state
+        function setLoading(isLoading) {
+            if (isLoading) {
+                loginBtn.classList.add('loading');
+                loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+                loginBtn.disabled = true;
+            } else {
+                loginBtn.classList.remove('loading');
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+                loginBtn.disabled = false;
+            }
+        }
+
+        // Validate email
+        function isValidEmail(email) {
+            const re = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
+            return re.test(email);
+        }
+
+        // Handle login
+        if (loginForm) {
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                messageBox.style.display = 'none';
+                
+                const email = emailInput.value.trim();
+                const password = passwordInput.value;
+                
+                if (!email || !password) {
+                    showMessage('❌ Please enter both email and password', 'error');
+                    return;
+                }
+                
+                if (!isValidEmail(email)) {
+                    showMessage('❌ Please enter a valid email address', 'error');
+                    return;
+                }
+                
+                setLoading(true);
+                
+                try {
+                    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, password })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        localStorage.setItem('token', data.access_token);
+                        localStorage.setItem('user', JSON.stringify(data.user));
+                        localStorage.setItem('loginTime', Date.now().toString());
+                        saveEmail(email);
+                        
+                        showMessage(`✅ Login successful! Welcome back, ${data.user.name}! Redirecting...`, 'success');
+                        
+                        setTimeout(() => {
+                            window.location.href = '../index.html';
+                        }, 1500);
+                    } else {
+                        if (data.error && data.error.includes('password')) {
+                            showMessage('❌ Incorrect password. Please try again.', 'error');
+                        } else if (data.error && (data.error.includes('email') || data.error.includes('not found'))) {
+                            showMessage('❌ No account found with this email. Please register first.', 'error');
+                        } else {
+                            showMessage(`❌ ${data.error || 'Login failed. Please try again.'}`, 'error');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    showMessage('❌ Connection error. Please check if the server is running on port 5000.', 'error');
+                } finally {
+                    setLoading(false);
+                }
+            });
+        }
+
+        // Enter key support
+        if (passwordInput) {
+            passwordInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    loginForm.dispatchEvent(new Event('submit'));
+                }
+            });
+        }
+
+        // Load saved email
+        loadSavedEmail();
+        
+        // Check if already logged in
+        if (localStorage.getItem('token')) {
+            window.location.href = '../index.html';
+        }
+        
+        // Focus on email
+        if (emailInput && !emailInput.value) {
+            emailInput.focus();
+        } else if (passwordInput) {
+            passwordInput.focus();
+        }
+    </script>
+</body>
+</html>
