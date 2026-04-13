@@ -364,7 +364,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📞 Support
 
 - **Issues:** [GitHub Issues](https://github.com/24A31A05KP/CitizenSheild/issues)
-- **Email:** support@citizenshield.com
+- **Email:** illasaibharatkumar@gmail.com
 - **Documentation:** [Project Wiki](https://github.com/24A31A05KP/CitizenSheild/wiki)
 
 ## ⚠️ Disclaimer
